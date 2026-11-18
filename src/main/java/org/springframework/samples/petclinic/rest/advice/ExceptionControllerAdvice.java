@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -40,7 +41,10 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class ExceptionControllerAdvice {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> exception(Exception e) {
+    public ResponseEntity<String> exception(Exception e) throws Exception {
+        if (e instanceof NoResourceFoundException) {
+            throw e;
+        }
         ObjectMapper mapper = new ObjectMapper();
         ErrorInfo errorInfo = new ErrorInfo(e);
         String respJSONstring = "{}";

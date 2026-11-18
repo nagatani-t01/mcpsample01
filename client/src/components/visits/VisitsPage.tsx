@@ -43,7 +43,7 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
     const { params } = this.props;
 
     if (params && params.ownerId) {
-      fetch(url(`/api/owner/${params.ownerId}`))
+      fetch(url(`/api/owners/${params.ownerId}`))
         .then(response => response.json())
         .then(owner => this.setState(
           {
@@ -67,7 +67,7 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
 
     const url = '/api/owners/' + owner.id + '/pets/' + petId + '/visits';
     submitForm('POST', url, request, (status, response) => {
-      if (status === 204) {
+      if (status === 200 || status === 201 || status === 204) {
         this.context.router.push({
           pathname: '/owners/' + owner.id
         });

@@ -3,7 +3,36 @@ import { IHttpMethod } from '../types';
 declare var __API_SERVER_URL__;
 const BACKEND_URL = (typeof __API_SERVER_URL__ === 'undefined' ? 'http://localhost:9966/petclinic' : __API_SERVER_URL__);
 
-export const url = (path: string): string => `${BACKEND_URL}/${path}`;
+export const url = (path: string): string => {
+  const base = BACKEND_URL.replace(/\/+$/, '');
+  const relative = path.replace(/^\/+/, '');
+  return `${base}/${relative}`;
+};
+
+const fieldErrorsFromHeader = (response: Response) => {
+  if (!response.headers || !response.headers.get) {
+    return null;
+  }
+  const header = response.headers.get('errors');
+  if (!header) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(header);
+    if (!Array.isArray(parsed)) {
+      return null;
+    }
+    const fieldErrors = {};
+    parsed.forEach(item => {
+      if (item && item.fieldName) {
+        fieldErrors[item.fieldName] = { field: item.fieldName, message: item.errorMessage };
+      }
+    });
+    return { fieldErrors };
+  } catch (e) {
+    return null;
+  }
+};
 
 /**
  * path: relative PATH without host and port (i.e. '/api/123')
@@ -25,5 +54,21 @@ export const submitForm = (method: IHttpMethod, path: string, data: any, onSucce
 
   console.log('Submitting to ' + method + ' ' + requestUrl);
   return fetch(requestUrl, fetchParams)
-    .then(response => response.status === 204 ? onSuccess(response.status, {}) : response.json().then(result => onSuccess(response.status, result)));
+    .then(response => {
+      if (response.status === 204) {
+        onSuccess(response.status, fieldErrorsFromHeader(response) || {});
+        return;
+      }
+      return response.text().then(text => {
+        let body = {};
+        if (text) {
+          try {
+            body = JSON.parse(text);
+          } catch (e) {
+            body = { message: text };
+          }
+        }
+        onSuccess(response.status, fieldErrorsFromHeader(response) || body);
+      });
+    });
 };

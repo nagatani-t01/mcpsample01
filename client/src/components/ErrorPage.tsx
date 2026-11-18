@@ -1,10 +1,16 @@
 import * as React from 'react';
 
+import { url } from '../util';
+
+interface IShownError {
+  status?: string;
+  message?: string;
+  className?: string;
+  exMessage?: string;
+}
+
 interface IErrorPageState {
-  error?: {
-    status: string;
-    message: string;
-  };
+  error?: IShownError;
 }
 
 export default class ErrorPage extends React.Component<void, IErrorPageState> {
@@ -14,9 +20,17 @@ export default class ErrorPage extends React.Component<void, IErrorPageState> {
   }
 
   componentDidMount() {
-    fetch('http://localhost:8080/api/oups')
-      .then(response => response.json())
-      .then(error => this.setState({error}));
+    fetch(url('api/oops'))
+      .then(response => response.json().then(body => ({ status: response.status, body })))
+      .then(result => this.setState({
+        error: {
+          status: String(result.status),
+          message: result.body.message,
+          className: result.body.className,
+          exMessage: result.body.exMessage
+        }
+      }))
+      .catch(() => this.setState({ error: { message: 'The error request could not be completed.' } }));
   }
 
   render() {
@@ -29,10 +43,11 @@ export default class ErrorPage extends React.Component<void, IErrorPageState> {
       { error ?
         <span>
           <p><b>Status:</b> {error.status}</p>
-          <p><b>Message:</b> {error.message}</p>
+          <p><b>Message:</b> {error.exMessage || error.message}</p>
+          {error.className ? <p><b>Type:</b> {error.className}</p> : null}
         </span>
         :
-        <p><b>Unkown error</b></p>
+        <p><b>Unknown error</b></p>
       }
     </span>;
   }

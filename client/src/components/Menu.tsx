@@ -29,12 +29,12 @@ export default ({name}: { name: string }) => (
                     <span>Find owners</span>
           </MenuItem>
 
-          <MenuItem active={name === 'vets'} url='/vets' title='veterinarians'>
+          <MenuItem active={name === '/vets'} url='/vets' title='veterinarians'>
             <span className='glyphicon glyphicon-th-list' aria-hidden='true'></span>&nbsp;
                     <span>Veterinarians</span>
           </MenuItem>
 
-          <MenuItem active={name === 'error'} url='/error'
+          <MenuItem active={name === '/error'} url='/error'
             title='trigger a RuntimeException to see how it is handled'>
             <span className='glyphicon glyphicon-warning-sign' aria-hidden='true'></span>&nbsp;
                     <span>Error</span>

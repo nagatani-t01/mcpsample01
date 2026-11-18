@@ -7,7 +7,7 @@ import Input from '../form/Input';
 import DateInput from '../form/DateInput';
 import SelectInput from '../form/SelectInput';
 
-import { IError, IOwner, IPetRequest, IEditablePet, IPet, IPetType, IRouterContext, ISelectOption } from '../../types';
+import { IError, IOwner, IEditablePet, IRouterContext, ISelectOption } from '../../types';
 
 interface IPetEditorProps {
   pet: IEditablePet;
@@ -39,18 +39,22 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
   onSubmit(event) {
     event.preventDefault();
 
-    const { owner } = this.props;
+    const { owner, pettypes } = this.props;
     const { editablePet } = this.state;
 
-    const request: IPetRequest = {
+    const selectedType = pettypes.find(option => String(option.value) === String(editablePet.typeId));
+    const request = {
       birthDate: editablePet.birthDate,
       name: editablePet.name,
-      typeId: editablePet.typeId
+      type: {
+        id: Number(editablePet.typeId),
+        name: selectedType ? selectedType.name : ''
+      }
     };
 
     const url = editablePet.isNew ? '/api/owners/' + owner.id + '/pets' :  '/api/owners/' + owner.id + '/pets/' + editablePet.id;
     submitForm(editablePet.isNew ? 'POST' : 'PUT', url, request, (status, response) => {
-      if (status === 204) {
+      if (status === 200 || status === 201 || status === 204) {
         this.context.router.push({
           pathname: '/owners/' + owner.id
         });

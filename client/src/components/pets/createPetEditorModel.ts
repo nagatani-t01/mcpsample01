@@ -8,13 +8,16 @@ export default (ownerId: string, petLoaderPromise: Promise<any>): Promise<any> =
     [fetch(url('/api/pettypes'))
       .then(response => response.json())
       .then(toSelectOptions),
-    fetch(url('/api/owner/' + ownerId))
+    fetch(url('/api/owners/' + ownerId))
       .then(response => response.json()),
       petLoaderPromise,
     ]
   ).then(results => ({
     pettypes: results[0],
     owner: results[1],
-    pet: results[2]
+    pet: Object.assign({}, results[2], {
+      isNew: !(results[2] && results[2].id),
+      typeId: results[2] && (results[2].typeId || (results[2].type && results[2].type.id))
+    })
   }));
 };
