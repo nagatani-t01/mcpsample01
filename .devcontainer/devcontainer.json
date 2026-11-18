@@ -1,29 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "Java",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "21-oracle",
-      "jdkDistro": "oracle"
-    },
-    "ghcr.io/devcontainers/features/azure-cli:1": {},
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
-  },
-
-  "customizations": {
-    "vscode": {
-      "settings": {},
-      "extensions": [
-        "redhat.vscode-xml",
-        "visualstudioexptteam.vscodeintellicode",
-        "vscjava.vscode-java-pack"
-      ]
-    }
-  },
-  "remoteUser": "vscode"
-=======
   "name": "Spring Petclinic (dev)",
   "dockerComposeFile": "../docker-compose.dev.yml",
   "service": "backend",
@@ -32,5 +7,4 @@
   "shutdownAction": "stopCompose",
   // Keep the dev loop started by the image's CMD instead of replacing it with sleep.
   "overrideCommand": false
->>>>>>> react-port
 }
