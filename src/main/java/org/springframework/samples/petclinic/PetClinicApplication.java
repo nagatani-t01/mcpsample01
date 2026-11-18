@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright 2012-2025 the original author or authors.
  *
@@ -14,10 +15,13 @@
  * limitations under the License.
  */
 
+=======
+>>>>>>> react-port
 package org.springframework.samples.petclinic;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+<<<<<<< HEAD
 import org.springframework.context.annotation.ImportRuntimeHints;
 
 /**
@@ -28,9 +32,19 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 @SpringBootApplication
 @ImportRuntimeHints(PetClinicRuntimeHints.class)
 public class PetClinicApplication {
+=======
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+@SpringBootApplication
+public class PetClinicApplication extends SpringBootServletInitializer {
+>>>>>>> react-port
 
 	public static void main(String[] args) {
 		SpringApplication.run(PetClinicApplication.class, args);
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> react-port
 }

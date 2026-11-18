@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "Java",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
@@ -22,4 +23,14 @@
     }
   },
   "remoteUser": "vscode"
+=======
+  "name": "Spring Petclinic (dev)",
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "backend",
+  "runServices": ["backend", "frontend"],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  // Keep the dev loop started by the image's CMD instead of replacing it with sleep.
+  "overrideCommand": false
+>>>>>>> react-port
 }

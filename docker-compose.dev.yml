@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: petclinic-react-backend:dev
+    ports:
+      - "9966:9966"
+    environment:
+      SPRING_DEVTOOLS_RESTART_ENABLED: "false"
+    volumes:
+      # Whole repository, so an IDE attached to this container edits the real files.
+      - .:/workspace
+      # Keep Maven output inside the container, not in the host folder.
+      - backend-target:/workspace/target
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    image: petclinic-react-frontend:dev
+    ports:
+      - "4444:4444"
+    environment:
+      API_SERVER_URL: http://localhost:9966/petclinic
+    volumes:
+      - ./client/src:/workspace/src
+      - ./client/public:/workspace/public
+      - ./client/webpack.config.dev.js:/workspace/webpack.config.dev.js
+      - ./client/webpack.config.docker.js:/workspace/webpack.config.docker.js
+    depends_on:
+      - backend
+
+volumes:
+  backend-target:

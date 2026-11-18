@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright 2012-2025 the original author or authors.
  *
@@ -18,3 +19,10 @@
  * The classes in this package represent utilities used by the domain.
  */
 package org.springframework.samples.petclinic.model;
+=======
+/**
+ * The classes in this package represent PetClinic's business layer.
+ */
+package org.springframework.samples.petclinic.model;
+
+>>>>>>> react-port
