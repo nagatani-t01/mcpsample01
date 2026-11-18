@@ -3,6 +3,14 @@
 FROM eclipse-temurin:17-jdk
 WORKDIR /workspace
 
+# git for version control inside the dev container.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+# The repository is bind-mounted from the host (owned by another UID),
+# so allow git to operate on it.
+RUN git config --system --add safe.directory /workspace
+
 COPY .mvn .mvn
 COPY mvnw pom.xml ./
 COPY src src
