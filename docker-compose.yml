@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: .
+    image: petclinic-react-backend:local
+    ports:
+      - "9966:9966"
+  frontend:
+    build:
+      context: ./client
+      args:
+        API_SERVER_URL: http://localhost:9966/petclinic
+    image: petclinic-react-frontend:local
+    ports:
+      - "4444:80"
+    depends_on:
+      - backend
