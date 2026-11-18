@@ -1,0 +1,14 @@
+# Development image: JDK and Maven stay in the container.
+# Source is mounted over /workspace/src at runtime.
+FROM eclipse-temurin:17-jdk
+WORKDIR /workspace
+
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+COPY src src
+COPY docker/backend-dev.sh /usr/local/bin/backend-dev.sh
+RUN chmod +x mvnw /usr/local/bin/backend-dev.sh \
+    && ./mvnw -B -DskipTests package
+
+EXPOSE 9966
+CMD ["backend-dev.sh"]

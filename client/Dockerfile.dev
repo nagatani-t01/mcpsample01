@@ -1,0 +1,23 @@
+# Development image: Node stays in the container and webpack watches mounted source.
+FROM node:18-bookworm
+WORKDIR /workspace
+
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts --legacy-peer-deps \
+    && npm install --no-save --ignore-scripts --legacy-peer-deps \
+        @babel/core@7.26.10 \
+        @babel/preset-env@7.26.9 \
+        @babel/preset-react@7.26.3 \
+        @babel/preset-typescript@7.27.1 \
+        babel-loader@9.2.1 \
+        style-loader@3.3.4 \
+        css-loader@6.11.0 \
+        less@4.2.2 \
+        less-loader@12.2.0 \
+        webpack-cli@5.1.4 \
+        webpack-dev-server@5.2.2
+
+COPY . .
+ENV API_SERVER_URL=http://localhost:9966/petclinic
+EXPOSE 4444
+CMD ["npx", "webpack", "serve", "--config", "webpack.config.dev.js"]

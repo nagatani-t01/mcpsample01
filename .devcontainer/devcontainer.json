@@ -1,0 +1,10 @@
+{
+  "name": "Spring Petclinic (dev)",
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "backend",
+  "runServices": ["backend", "frontend"],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  // Keep the dev loop started by the image's CMD instead of replacing it with sleep.
+  "overrideCommand": false
+}
