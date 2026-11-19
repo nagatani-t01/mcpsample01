@@ -7,6 +7,7 @@ import org.springframework.samples.petclinic.mcp.client.PetclinicApiClient;
 import org.springframework.samples.petclinic.mcp.client.dto.PetType;
 import org.springframework.stereotype.Component;
 
+/** ペット種別一覧の MCP ツール（{@code list_pet_types}）。{@code create_pet} の種別 ID 確認にも使う。 */
 @Component
 public class PetTypeTools {
 

@@ -9,6 +9,10 @@ import org.springframework.samples.petclinic.mcp.client.dto.Owner;
 import org.springframework.samples.petclinic.mcp.client.dto.OwnerFields;
 import org.springframework.stereotype.Component;
 
+/**
+ * 飼い主の MCP ツール（{@code list_owners} / {@code get_owner} / {@code create_owner}）。
+ * 業務ロジックは持たず {@link org.springframework.samples.petclinic.mcp.client.PetclinicApiClient} に委譲する。
+ */
 @Component
 public class OwnerTools {
 

@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 
+/**
+ * {@link org.springframework.web.client.RestClientResponseException} や接続失敗を AI 向けメッセージに変換する。
+ * 入力エラーは {@code errors} ヘッダー、DB 制約違反は応答本文のクラス名のみをユーザーに返し、SQL 詳細は DEBUG ログのみ。
+ */
 @Component
 public class ApiErrorTranslator {
 

@@ -21,6 +21,8 @@ petclinic:
     timeout: ${PETCLINIC_API_TIMEOUT:10s}
     username: ${PETCLINIC_API_USERNAME:}
     password: ${PETCLINIC_API_PASSWORD:}
+  mcp:
+    trace-enabled: ${MCP_TRACE_ENABLED:true}
 
 mcp:
   allowed-origins: ${MCP_ALLOWED_ORIGINS:http://localhost,http://127.0.0.1}
@@ -28,3 +30,6 @@ mcp:
 logging:
   level:
     org.springframework.samples.petclinic.mcp.client: DEBUG
+    org.springframework.samples.petclinic.mcp.config.McpHttpTraceFilter: INFO
+    org.springframework.samples.petclinic.mcp.config.McpToolTraceAspect: INFO
+    org.springframework.samples.petclinic.mcp.config.PetclinicApiTraceInterceptor: INFO

@@ -10,6 +10,10 @@ import org.springframework.samples.petclinic.mcp.client.dto.PetFields;
 import org.springframework.samples.petclinic.mcp.client.dto.PetType;
 import org.springframework.stereotype.Component;
 
+/**
+ * ペットの MCP ツール（{@code list_pets} / {@code create_pet}）。
+ * {@code list_pets} の {@code ownerId} 絞り込みは API にクエリが無いためサーバー側でフィルタする。
+ */
 @Component
 public class PetTools {
 

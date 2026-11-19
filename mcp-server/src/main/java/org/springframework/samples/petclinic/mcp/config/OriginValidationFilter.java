@@ -12,6 +12,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * {@code Origin} ヘッダーが許可リスト外の場合は 403 を返す（ブラウザ経由の不正呼び出し対策）。
+ * ヘッダーが無いリクエスト（Cursor などのネイティブ MCP クライアント）は通す。
+ */
 @Component
 @Order(0)
 public class OriginValidationFilter extends OncePerRequestFilter {

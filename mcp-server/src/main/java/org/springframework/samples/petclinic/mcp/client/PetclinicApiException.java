@@ -1,6 +1,8 @@
 package org.springframework.samples.petclinic.mcp.client;
 
-/** User- and model-facing API error; becomes an MCP error tool result when thrown from tools. */
+/**
+ * ツールから投げる実行時例外。MCP クライアント（Cursor）にはエラーツール結果として伝わり、再試行の手がかりとなる。
+ */
 public class PetclinicApiException extends RuntimeException {
 
     public PetclinicApiException(String message) {

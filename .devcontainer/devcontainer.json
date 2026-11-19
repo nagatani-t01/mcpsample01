@@ -16,7 +16,8 @@
     "vscode": {
       "extensions": [
         "eamodio.gitlens",
-        "biomejs.biome"
+        "biomejs.biome",
+        "bierner.markdown-mermaid"
       ]
     }
   }

@@ -27,22 +27,39 @@ AI クライアント（Cursor / VS Code など）から、自然言語の指示
 
 ```mermaid
 flowchart LR
-    subgraph Host[開発マシン]
-        AI[AI クライアント<br/>Cursor / VS Code]
-        Browser[ブラウザ]
+    subgraph host["開発マシン（利用環境）"]
+        AI["Cursor / VS Code<br/>MCP クライアント"]
+        Browser["ブラウザ"]
     end
-    subgraph Compose[docker-compose.dev.yml]
-        MCP[mcp-server<br/>Spring AI MCP<br/>:8090 /mcp]
-        Backend[backend<br/>Spring Boot REST API<br/>:9966 /petclinic/api]
-        Frontend[frontend<br/>React<br/>:4444]
-        DB[(HSQLDB<br/>メモリ)]
+
+    subgraph mcpNew["今回追加：MCP 連携"]
+        MCP["mcp-server/<br/>Spring AI MCP<br/>ポート 8090"]
     end
-    AI -->|Streamable HTTP<br/>JSON-RPC| MCP
-    MCP -->|HTTP JSON<br/>http://backend:9966| Backend
+
+    subgraph existing["既存：Petclinic（変更なし）"]
+        Frontend["client/<br/>frontend コンテナ<br/>ポート 4444"]
+        Backend["src/<br/>backend コンテナ<br/>REST API ポート 9966"]
+        DB[("HSQLDB<br/>メモリ")]
+    end
+
+    AI -->|"Streamable HTTP"| MCP
+    MCP -->|"HTTP JSON<br/>既存 API を呼び出し"| Backend
     Browser --> Frontend
-    Browser -->|API 呼び出し| Backend
+    Frontend -->|"HTTP JSON"| Backend
     Backend --> DB
+
+    classDef mcpNew fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#14532d
+    classDef existing fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#1e3a8a
+    classDef hostNode fill:#f8fafc,stroke:#64748b,color:#334155
+
+    class MCP mcpNew
+    class Frontend,Backend,DB existing
+    class AI,Browser hostNode
 ```
+
+**凡例:** 緑の枠＝今回追加（`mcp-server/`・Compose の `mcp-server` サービス）。青の枠＝既存（`src/`・`client/`・`backend` / `frontend` コンテナ）。MCP は DB に直接つながらず、既存 REST API だけを利用します。
+
+> **図の見方（Cursor / VS Code）:** 既定の Markdown プレビューだけでは Mermaid が描画されないことがあります。リポジトリの `.vscode/settings.json` で `markdown.mermaid.enabled` を有効にするか、拡張機能 **Markdown Preview Mermaid Support**（`bierner.markdown-mermaid`）を入れてから、プレビューを開き直してください（Dev Container 利用時は `devcontainer.json` に同拡張を入れています）。
 
 - MCP サーバーはデータベースへ直接アクセスせず、必ず REST API を経由します。そのため、API のバリデーション、トランザクション、認証設定がそのまま適用されます。
 - React 画面と MCP サーバーは同じ API を使うため、MCP 経由で登録したデータは画面にもそのまま反映されます。既定の HSQLDB はメモリ上にあるため、`backend` コンテナを再起動するとデータは初期状態に戻ります。
@@ -101,15 +118,36 @@ mcp-server/
 ## 4. レイヤー構成
 
 ```mermaid
-flowchart TD
-    Transport[Spring AI MCP Server<br/>Streamable HTTP /mcp] --> Tools[Tools<br/>OwnerTools / PetTools / VisitTools ...]
-    Transport --> Res[Resources<br/>OpenApiResource]
-    Tools --> Client[PetclinicApiClient<br/>RestClient]
-    Res --> Client
-    Client -->|4xx / 5xx / 接続失敗| Translator[ApiErrorTranslator]
-    Translator -->|PetclinicApiException| Tools
-    Client -->|HTTP| API[(Petclinic REST API)]
+flowchart TB
+    subgraph mcpNew["今回追加：mcp-server/ 内のレイヤー"]
+        direction TB
+        Transport["Spring AI MCP Server<br/>Streamable HTTP /mcp"]
+        Tools["Tools<br/>OwnerTools / PetTools / VisitTools ..."]
+        Res["Resources<br/>OpenApiResource"]
+        Client["PetclinicApiClient<br/>RestClient"]
+        Translator["ApiErrorTranslator"]
+        Transport --> Tools
+        Transport --> Res
+        Tools --> Client
+        Res --> Client
+        Client -->|"4xx / 5xx / 接続失敗"| Translator
+        Translator -->|"PetclinicApiException"| Tools
+    end
+
+    subgraph existing["既存：Spring Boot（src/）"]
+        API[("REST API<br/>コントローラー・サービス・DB<br/>本リリースでは変更なし")]
+    end
+
+    Client -->|"HTTP JSON"| API
+
+    classDef mcpNew fill:#dcfce7,stroke:#15803d,stroke-width:2px,color:#14532d
+    classDef existing fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#1e3a8a
+
+    class Transport,Tools,Res,Client,Translator mcpNew
+    class API existing
 ```
+
+**凡例:** 上段の緑枠はすべて新規モジュール `mcp-server/` の責務。下段の青枠は既存バックエンドのみ。業務ロジック・DB アクセスは既存 API 側に留まります。
 
 - **Tools / Resources**: MCP に公開する入口です。入力の簡単な検証（必須項目、日付形式）と、AI が読みやすい形への整形を担当します。業務ルールは持ちません。
 - **PetclinicApiClient**: REST API の呼び出しだけを担当します。1 つの API 呼び出しに 1 つのメソッドを対応させます。
@@ -343,6 +381,13 @@ Dev Container に接続したエディタで MCP がどちら側で動くかは�
 4. 10.2 の表に従いチャットまたは MCP パネルでツールを実行し、http://localhost:4444 および API と結果を突き合わせる。
 
 トラブル時はホスト側で `docker compose -f docker-compose.dev.yml logs -f mcp-server` により MCP コンテナのログを確認する（手順は [mcp-server/README.md](../../mcp-server/README.md) の「ログの確認」）。
+
+### 10.4 やり取りの可視化（テスト時）
+
+手動テスト時に Cursor と `mcp-server` の間で何が起きているかは、次で追えます。
+
+- **シーケンス図とログの読み方**: [mcp-server/README.md](../../mcp-server/README.md) の「テスト時のやり取りの可視化」
+- **サーバー側トレース**: 環境変数 `MCP_TRACE_ENABLED`（既定 `true`）で、`[mcp-trace]` 行が inbound（`/mcp` への HTTP）→ tool（ツール名・引数）→ outbound-api（既存 REST 呼び出し）の順に出力されます。JSON-RPC 本文はログに出しません（9 章）。
 
 ## 11. 実装時に確認する事項
 

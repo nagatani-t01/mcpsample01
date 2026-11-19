@@ -4,6 +4,10 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * 既存バックエンド API の接続先（ベース URL・タイムアウト・Basic 認証）。
+ * {@link #openApiDocsUrl()} で springdoc の OpenAPI YAML の URL を組み立てる。
+ */
 @ConfigurationProperties(prefix = "petclinic.api")
 public class PetclinicApiProperties {
 

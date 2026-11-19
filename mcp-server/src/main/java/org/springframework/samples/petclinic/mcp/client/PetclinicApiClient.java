@@ -18,6 +18,10 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * 既存 Petclinic REST API を呼び出す薄いクライアント層。
+ * 1 メソッドが 1 エンドポイントに対応し、HTTP エラーは {@link ApiErrorTranslator} 経由で {@link PetclinicApiException} に変換する。
+ */
 @Component
 public class PetclinicApiClient {
 
@@ -106,6 +110,7 @@ public class PetclinicApiClient {
         return types != null ? types : List.of();
     }
 
+    /** {@code create_pet} 用。存在しない ID のときは利用可能な種別一覧を例外メッセージに含める。 */
     public PetType requirePetType(int petTypeId) {
         return listPetTypes().stream()
             .filter(type -> type.id() != null && type.id() == petTypeId)
@@ -147,11 +152,7 @@ public class PetclinicApiClient {
         }
     }
 
-    @FunctionalInterface
-  private interface ApiCall<T> {
-        T call();
-    }
-
+    /** 共通の例外変換付き API 呼び出し。{@code notFoundHint} は 404 時に AI へ返す文言。 */
     private <T> T exchange(ApiCall<T> call, String notFoundHint) {
         try {
             return call.call();
@@ -165,5 +166,10 @@ public class PetclinicApiClient {
             }
             throw errorTranslator.translateConnection(ex);
         }
+    }
+
+    @FunctionalInterface
+    private interface ApiCall<T> {
+        T call();
     }
 }

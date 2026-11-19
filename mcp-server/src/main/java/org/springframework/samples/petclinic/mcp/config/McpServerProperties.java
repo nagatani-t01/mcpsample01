@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * MCP サーバー向けの一般設定。現在は {@code mcp.allowed-origins}（カンマ区切り）を {@link OriginValidationFilter} が参照する。
+ */
 @ConfigurationProperties(prefix = "mcp")
 public class McpServerProperties {
 

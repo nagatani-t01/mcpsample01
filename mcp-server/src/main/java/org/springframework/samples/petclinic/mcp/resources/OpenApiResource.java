@@ -4,6 +4,9 @@ import org.springaicommunity.mcp.annotation.McpResource;
 import org.springframework.samples.petclinic.mcp.client.PetclinicApiClient;
 import org.springframework.stereotype.Component;
 
+/**
+ * MCP リソース {@code petclinic://openapi.yml}。バックエンドの {@code /v3/api-docs.yaml} をその都度取得し、仕様の二重管理を避ける。
+ */
 @Component
 public class OpenApiResource {
 

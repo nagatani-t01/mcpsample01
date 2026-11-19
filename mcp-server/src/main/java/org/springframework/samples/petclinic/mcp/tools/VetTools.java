@@ -7,6 +7,7 @@ import org.springframework.samples.petclinic.mcp.client.PetclinicApiClient;
 import org.springframework.samples.petclinic.mcp.client.dto.Vet;
 import org.springframework.stereotype.Component;
 
+/** 獣医一覧の MCP ツール（{@code list_vets}）。 */
 @Component
 public class VetTools {
 

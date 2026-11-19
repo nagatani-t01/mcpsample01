@@ -10,6 +10,10 @@ import org.springframework.samples.petclinic.mcp.client.dto.Visit;
 import org.springframework.samples.petclinic.mcp.client.dto.VisitFields;
 import org.springframework.stereotype.Component;
 
+/**
+ * 来院記録の MCP ツール（{@code list_visits} / {@code create_visit}）。
+ * {@code create_visit} は登録前に {@code getOwnersPet} で飼い主とペットの組み合わせを確認する。
+ */
 @Component
 public class VisitTools {
 
