@@ -1,0 +1,8 @@
+FROM eclipse-temurin:17-jdk
+WORKDIR /workspace
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+COPY src src
+RUN chmod +x mvnw && ./mvnw -B -DskipTests package
+EXPOSE 8090
+CMD ["./mvnw", "spring-boot:run"]

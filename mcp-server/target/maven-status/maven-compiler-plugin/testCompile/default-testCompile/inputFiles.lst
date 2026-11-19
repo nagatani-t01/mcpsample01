@@ -1,0 +1,3 @@
+/workspace/mcp-server/src/test/java/org/springframework/samples/petclinic/mcp/client/ApiErrorTranslatorTests.java
+/workspace/mcp-server/src/test/java/org/springframework/samples/petclinic/mcp/client/PetclinicApiClientTests.java
+/workspace/mcp-server/src/test/java/org/springframework/samples/petclinic/mcp/tools/VisitToolsTests.java

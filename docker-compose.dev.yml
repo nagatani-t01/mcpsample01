@@ -29,6 +29,22 @@ services:
       - ./client/webpack.config.docker.js:/workspace/webpack.config.docker.js
     depends_on:
       - backend
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile.dev
+    image: petclinic-mcp-server:dev
+    ports:
+      - "127.0.0.1:8090:8090"
+    environment:
+      PETCLINIC_API_BASE_URL: http://backend:9966/petclinic/api
+    volumes:
+      - ./mcp-server/src:/workspace/src
+      - ./mcp-server/pom.xml:/workspace/pom.xml
+      - mcp-server-target:/workspace/target
+    depends_on:
+      - backend
 
 volumes:
   backend-target:
+  mcp-server-target:

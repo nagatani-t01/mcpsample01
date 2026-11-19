@@ -333,6 +333,17 @@ Dev Container に接続したエディタで MCP がどちら側で動くかは�
 
 登録系ツール（`create_owner`、`create_pet`、`create_visit`）は自動テストで確認し、手動確認は任意とします。確認する場合は、登録後に画面を再読み込みして反映されることを見ます。
 
+### 10.3 Cursor からの手動テスト手順
+
+運用手順の詳細は [mcp-server/README.md](../../mcp-server/README.md) と [環境構築手順.md](../環境構築手順.md) の「3.2 Cursor から MCP を接続して手動テストする」に記載しています。要点は次のとおりです。
+
+1. Dev Container（または `docker compose -f docker-compose.dev.yml up --build`）で `backend` / `frontend` / `mcp-server` を起動する。
+2. ホスト上の Cursor が読む `.cursor/mcp.json` で `http://localhost:8090/mcp` に接続する（MCP クライアントはホスト側で動作する想定）。
+3. **Cursor Settings → MCP** で `petclinic` が接続済みか確認し、ツール 9 件・リソース 1 件が見えることを確認する。
+4. 10.2 の表に従いチャットまたは MCP パネルでツールを実行し、http://localhost:4444 および API と結果を突き合わせる。
+
+トラブル時はホスト側で `docker compose -f docker-compose.dev.yml logs -f mcp-server` により MCP コンテナのログを確認する（手順は [mcp-server/README.md](../../mcp-server/README.md) の「ログの確認」）。
+
 ## 11. 実装時に確認する事項
 
 - Spring AI の最新 GA バージョンと、それが対応する Spring Boot のバージョン。設定キー（`spring.ai.mcp.server.protocol` など）とアノテーション名が、本書の記載と一致するかを確認します。

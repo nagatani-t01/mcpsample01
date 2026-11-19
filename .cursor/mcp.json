@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "petclinic": {
+      "url": "http://localhost:8090/mcp"
+    }
+  }
+}

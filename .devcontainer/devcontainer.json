@@ -4,7 +4,8 @@
   "service": "backend",
   "runServices": [
     "backend",
-    "frontend"
+    "frontend",
+    "mcp-server"
   ],
   "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",

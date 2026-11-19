@@ -1,0 +1,30 @@
+server:
+  port: ${MCP_SERVER_PORT:8090}
+
+spring:
+  application:
+    name: petclinic-mcp-server
+  ai:
+    mcp:
+      server:
+        name: petclinic-mcp-server
+        version: 0.1.0
+        type: SYNC
+        protocol: STREAMABLE
+        capabilities:
+          tool: true
+          resource: true
+
+petclinic:
+  api:
+    base-url: ${PETCLINIC_API_BASE_URL:http://localhost:9966/petclinic/api}
+    timeout: ${PETCLINIC_API_TIMEOUT:10s}
+    username: ${PETCLINIC_API_USERNAME:}
+    password: ${PETCLINIC_API_PASSWORD:}
+
+mcp:
+  allowed-origins: ${MCP_ALLOWED_ORIGINS:http://localhost,http://127.0.0.1}
+
+logging:
+  level:
+    org.springframework.samples.petclinic.mcp.client: DEBUG
