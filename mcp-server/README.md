@@ -132,82 +132,14 @@ npx @modelcontextprotocol/inspector
 
 接続 URL: `http://localhost:8090/mcp`
 
-## テスト時のやり取りの可視化（Cursor ↔ mcp-server）
+## テスト時のやり取りの可視化
 
-Cursor からツールを 1 回実行すると、おおむね次の順で処理されます（MCP プロトコルは JSON-RPC over Streamable HTTP です）。
+Cursor の **リクエスト／レスポンス（JSON-RPC）**、`[mcp-trace]` ログ、ソースファイルの対応は **[docs/CursorとMCPのやり取り.md](docs/CursorとMCPのやり取り.md)** にまとめています。
 
-```mermaid
-sequenceDiagram
-    participant C as Cursor<br/>MCP クライアント
-    participant M as mcp-server<br/>Spring AI MCP
-    participant T as Tools<br/>list_owners など
-    participant A as Petclinic REST API<br/>backend
-
-    C->>M: HTTP POST /mcp<br/>JSON-RPC tools/call
-    Note over M: inbound ログ
-    M->>T: ツール実行
-    Note over T: tool ログ name / args
-    T->>A: HTTP GET/POST /api/...
-    Note over A: backend アクセスログ
-    A-->>T: JSON 応答
-    Note over T: outbound-api ログ
-    T-->>M: 戻り値
-    M-->>C: CallToolResult（JSON）
-    Note over C: チャットに結果表示
-```
-
-### mcp-server 側（推奨）
-
-既定で **`[mcp-trace]`** プレフィックス付きのログを出します（`MCP_TRACE_ENABLED=true`、省略時も有効）。ホストで次を実行し、チャットでツールを実行した直後の行を見ます。
+ログを追いながら試すとき（ホスト側）:
 
 ```bash
 docker compose -f docker-compose.dev.yml logs -f mcp-server 2>&1 | grep '\[mcp-trace\]'
-```
-
-| ログの `phase` / 種別 | 意味 | 主なソース（`mcp-server/`） |
-| --- | --- | --- |
-| `inbound phase=start/end` | Cursor からの HTTP が `/mcp` に到達したこと（method・status・所要時間） | [`config/McpHttpTraceFilter.java`](src/main/java/org/springframework/samples/petclinic/mcp/config/McpHttpTraceFilter.java)（その前に [`config/OriginValidationFilter.java`](src/main/java/org/springframework/samples/petclinic/mcp/config/OriginValidationFilter.java) で Origin 検証）。JSON-RPC の受信と `tools/call` の解釈は Spring AI MCP（`spring-ai-starter-mcp-server-webmvc`）の自動構成 |
-| `tool phase=start/success/error` | どの MCP ツールが、どの引数で呼ばれたか（`name=` `args=`） | ログは [`config/McpToolTraceAspect.java`](src/main/java/org/springframework/samples/petclinic/mcp/config/McpToolTraceAspect.java)。`list_owners` の実装は [`tools/OwnerTools.java`](src/main/java/org/springframework/samples/petclinic/mcp/tools/OwnerTools.java) の `listOwners` |
-| `outbound-api phase=start/end` | 既存 API への実際の HTTP（`GET …/owners?lastName=Davis` など） | ログは [`config/PetclinicApiTraceInterceptor.java`](src/main/java/org/springframework/samples/petclinic/mcp/config/PetclinicApiTraceInterceptor.java)。呼び出し本体は [`client/PetclinicApiClient.java`](src/main/java/org/springframework/samples/petclinic/mcp/client/PetclinicApiClient.java) の `listOwners`。`RestClient` の組み立ては [`config/RestClientConfig.java`](src/main/java/org/springframework/samples/petclinic/mcp/config/RestClientConfig.java) |
-
-1 回の `list_owners`（`lastName=Davis`）の例:
-
-```text
-[mcp-trace] inbound phase=start method=POST path=/mcp origin=-
-[mcp-trace] tool phase=start name=list_owners args=lastName=Davis
-[mcp-trace] outbound-api phase=start method=GET uri=http://backend:9966/petclinic/api/owners?lastName=Davis
-[mcp-trace] outbound-api phase=end ... status=200 durationMs=...
-[mcp-trace] tool phase=success name=list_owners durationMs=... resultPreview=[{...}]
-[mcp-trace] inbound phase=end method=POST path=/mcp status=200 durationMs=...
-```
-
-上記ログ行とソースの対応（**既存 backend** はリポジトリルートの `src/` 側）:
-
-| # | ログ行（抜粋） | 処理 | ソースファイル |
-| --- | --- | --- | --- |
-| 1 | `inbound phase=start` | `/mcp` への HTTP 受信開始 | `mcp-server/.../config/McpHttpTraceFilter.java` |
-| 2 | `tool phase=start name=list_owners` | MCP ツール実行開始 | ログ: `McpToolTraceAspect.java` → 処理: `tools/OwnerTools.java`（`@McpTool name = "list_owners"`） |
-| 3 | `outbound-api phase=start` … `GET …/owners?lastName=Davis` | 既存 REST API 呼び出し開始 | ログ: `PetclinicApiTraceInterceptor.java` → 処理: `client/PetclinicApiClient.java` の `listOwners` |
-| 4 | `outbound-api phase=end` … `status=200` | API 応答受信 | 同上（インターセプターが応答後に記録） |
-| 5 | `tool phase=success` … `resultPreview=` | ツール戻り値を MCP 結果に変換 | `McpToolTraceAspect.java` → `OwnerTools.java` |
-| 6 | `inbound phase=end` … `status=200` | HTTP 応答返却（Cursor へ） | `McpHttpTraceFilter.java`（応答生成は Spring AI MCP） |
-| （参考） | backend コンテナの Tomcat / Spring MVC ログ | `GET /petclinic/api/owners` の処理 | 既存: `src/main/java/.../rest/controller/OwnerRestController.java` など（`mcp-server` 外） |
-
-トレースの on/off は [`config/McpTraceProperties.java`](src/main/java/org/springframework/samples/petclinic/mcp/config/McpTraceProperties.java) と `application.yml` の `petclinic.mcp.trace-enabled`（環境変数 `MCP_TRACE_ENABLED`）です。
-
-トレースを止める場合: `MCP_TRACE_ENABLED=false` を `mcp-server` の環境変数に設定します。JSON-RPC の本文全体はログに出しません（設計どおり）。
-
-### Cursor 側
-
-- **Agent チャット**: ツール名と実行結果の要約がメッセージに表示されます（詳細はサーバーログの `resultPreview` と照合）。
-- **Output パネル**: 表示対象に **MCP** または **Cursor MCP** がある場合、接続エラーやクライアント側のメッセージが出ます（バージョンにより名称は異なります）。
-- **Settings → MCP**: `petclinic` の接続状態。ツール一覧は `tools/list` に相当する初期化時に取得されます。
-
-Cursor 側だけでは Petclinic API までの内部呼び出しは見えないため、**エンドツーエンドの可視化は `mcp-server` の `[mcp-trace]` と `backend` ログの組み合わせ**が確実です。
-
-```bash
-# 同時に追う例（ホスト）
-docker compose -f docker-compose.dev.yml logs -f mcp-server backend 2>&1 | grep -E '\[mcp-trace\]|petclinic'
 ```
 
 ## ログの確認

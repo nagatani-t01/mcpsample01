@@ -85,6 +85,7 @@ docker compose -f docker-compose.dev.yml down
 | 内容 | 参照先 |
 | --- | --- |
 | Cursor 向けテスト文・接続トラブル | [mcp-server/README.md](mcp-server/README.md) |
+| リクエスト／レスポンスとログの可視化 | [mcp-server/docs/CursorとMCPのやり取り.md](mcp-server/docs/CursorとMCPのやり取り.md) |
 | ログの見方 | [mcp-server/README.md](mcp-server/README.md)（「ログの確認」）、[docs/環境構築手順.md](docs/環境構築手順.md) §3.3 |
 | 設計・ツール一覧 | [docs/MCP導入/MCP連携機能設計書.md](docs/MCP導入/MCP連携機能設計書.md) |
 

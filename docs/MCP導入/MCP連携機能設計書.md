@@ -386,7 +386,7 @@ Dev Container に接続したエディタで MCP がどちら側で動くかは�
 
 手動テスト時に Cursor と `mcp-server` の間で何が起きているかは、次で追えます。
 
-- **シーケンス図とログの読み方**: [mcp-server/README.md](../../mcp-server/README.md) の「テスト時のやり取りの可視化」
+- **シーケンス図・JSON-RPC・ログの読み方**: [mcp-server/docs/CursorとMCPのやり取り.md](../../mcp-server/docs/CursorとMCPのやり取り.md)
 - **サーバー側トレース**: 環境変数 `MCP_TRACE_ENABLED`（既定 `true`）で、`[mcp-trace]` 行が inbound（`/mcp` への HTTP）→ tool（ツール名・引数）→ outbound-api（既存 REST 呼び出し）の順に出力されます。JSON-RPC 本文はログに出しません（9 章）。
 
 ## 11. 実装時に確認する事項
