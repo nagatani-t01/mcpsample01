@@ -2,9 +2,21 @@
   "name": "Spring Petclinic (dev)",
   "dockerComposeFile": "../docker-compose.dev.yml",
   "service": "backend",
-  "runServices": ["backend", "frontend"],
+  "runServices": [
+    "backend",
+    "frontend"
+  ],
   "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",
   // Keep the dev loop started by the image's CMD instead of replacing it with sleep.
-  "overrideCommand": false
+  "overrideCommand": false,
+  // 追加する設定
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "eamodio.gitlens",
+        "biomejs.biome"
+      ]
+    }
+  }
 }
