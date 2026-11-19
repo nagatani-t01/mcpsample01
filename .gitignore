@@ -1,13 +1,53 @@
-target/*
-.settings/*
-.classpath
-.project
-.idea
-*.iml
-/target
+# Maven build output (root and submodules such as mcp-server/)
+target/
+**/target/
 
+# OpenAPI / codegen scratch
 generated/
 
-# Easier branch switching
+# Node.js (client and any root-level installs)
+node_modules/
+**/node_modules/
+client/dist/
+client/public/dist/
+client/_dist/
+client/typings/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE and local editor state
+.settings/
+.classpath
+.project
+.idea/
+*.iml
+*.ipr
+*.iws
+.factorypath
+
+# Cursor: keep project MCP config, ignore other local state
+.cursor/*
+!.cursor/mcp.json
+
+# Other AI tool local dirs
+.claude/
+
+# Environment and secrets (never commit)
+.env
+.env.*
+!.env.example
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.swp
+*~
+
+# Easier branch switching (legacy sibling checkouts)
 springboot-petclinic-client/
 springboot-petclinic-server/
