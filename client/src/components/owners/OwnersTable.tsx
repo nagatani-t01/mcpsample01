@@ -22,10 +22,10 @@ const renderOwners = (owners: IOwner[]) => (
     <table className='table table-striped'>
       <thead>
         <tr>
-          <th>Name</th>
+          <th>飼い主</th>
           <th className='hidden-sm hidden-xs'>Address</th>
-          <th>City</th>
-          <th>Telephone</th>
+          <th>住所２</th>
+          <th>電話番号</th>
           <th className='hidden-xs'>Pets</th>
         </tr>
       </thead>
@@ -36,4 +36,4 @@ const renderOwners = (owners: IOwner[]) => (
   </section>
 );
 
-export default ({owners}: { owners: IOwner[] }) => owners ? renderOwners(owners) : null;
+export default ({ owners }: { owners: IOwner[] }) => owners ? renderOwners(owners) : null;

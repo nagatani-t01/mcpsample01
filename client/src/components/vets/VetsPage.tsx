@@ -33,12 +33,12 @@ export default class VetsPage extends React.Component<void, IVetsPageState> {
 
     return (
       <span>
-        <h2>Veterinarians</h2>
+        <h2>獣医師</h2>
         <table className='table table-striped'>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Specialties</th>
+              <th>獣医師名</th>
+              <th>専門</th>
             </tr>
           </thead>
           <tbody>

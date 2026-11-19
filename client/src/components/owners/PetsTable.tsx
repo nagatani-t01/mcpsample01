@@ -3,12 +3,12 @@ import * as React from 'react';
 import { Link } from 'react-router';
 import { IOwner, IPet } from '../../types';
 
-const VisitsTable = ({ownerId, pet}: { ownerId: number, pet: IPet }) => (
+const VisitsTable = ({ ownerId, pet }: { ownerId: number, pet: IPet }) => (
   <table className='table-condensed'>
     <thead>
       <tr>
-        <th>Visit Date</th>
-        <th>Description</th>
+        <th>来店日</th>
+        <th>来店内容</th>
       </tr>
     </thead>
     <tbody>
@@ -30,20 +30,20 @@ const VisitsTable = ({ownerId, pet}: { ownerId: number, pet: IPet }) => (
   </table>
 );
 
-export default ({owner}: { owner: IOwner }) => (
+export default ({ owner }: { owner: IOwner }) => (
   <section>
-    <h2>Pets and Visits</h2>
+    <h2>ペットと来店</h2>
     <table className='table table-striped'>
       <tbody>
         {owner.pets.map(pet => (
           <tr key={pet.id}>
             <td style={{ 'verticalAlign': 'top' }}>
               <dl className='dl-horizontal'>
-                <dt>Name</dt>
+                <dt>ペット名</dt>
                 <dd>{pet.name}</dd>
-                <dt>Birth Date</dt>
+                <dt>誕生日</dt>
                 <dd>{pet.birthDate}</dd>
-                <dt>Type</dt>
+                <dt>ペット種類</dt>
                 <dd>{pet.type.name}</dd>
               </dl>
             </td>

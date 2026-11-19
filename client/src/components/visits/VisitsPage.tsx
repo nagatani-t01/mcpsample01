@@ -25,7 +25,7 @@ interface IVisitsPageState {
 
 export default class VisitsPage extends React.Component<IVisitsPageProps, IVisitsPageState> {
 
- context: IRouterContext;
+  context: IRouterContext;
 
   static contextTypes = {
     router: React.PropTypes.object.isRequired
@@ -91,15 +91,15 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
       return <h2>Loading...</h2>;
     }
 
-    const { owner, error, visit } = this.state;
+    const { owner, error, visit } = this.state;
     const petId = this.props.params.petId;
 
     const pet = owner.pets.find(candidate => candidate.id.toString() === petId);
 
     return (
       <div>
-        <h2>Visits</h2>
-        <b>Pet</b>
+        <h2>来店</h2>
+        <b>ペット</b>
         <PetDetails owner={owner} pet={pet} />
 
         <form className='form-horizontal' method='POST' action={url('/api/owner')}>

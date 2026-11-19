@@ -2,14 +2,14 @@ import * as React from 'react';
 
 import { IOwner, IPet } from '../../types';
 
-export default ({owner, pet}: { owner: IOwner, pet: IPet }) => (
+export default ({ owner, pet }: { owner: IOwner, pet: IPet }) => (
   <table className='table table-striped'>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Birth Date</th>
-        <th>Type</th>
-        <th>Owner</th>
+        <th>ペット名</th>
+        <th>誕生日</th>
+        <th>ペット種類</th>
+        <th>飼い主</th>
       </tr>
     </thead>
     <tbody>
