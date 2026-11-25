@@ -8,20 +8,33 @@
 
 | 項目 | 本リポジトリでの値 |
 | --- | --- |
-| トランスポート | **Streamable HTTP**（`spring.ai.mcp.server.protocol=STREAMABLE`） |
+| トランスポート | **[Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)**（`spring.ai.mcp.server.protocol=STREAMABLE`） |
 | エンドポイント | `http://localhost:8090/mcp`（Compose 内は `http://mcp-server:8090/mcp`） |
-| メッセージ形式 | **JSON-RPC 2.0**（MCP 仕様に沿った `method` / `params` / `result`） |
-| 本文のログ | **出さない**（`McpHttpTraceFilter` は method・path・status のみ。設計書 9 章） |
+| メッセージ形式 | **[JSON-RPC 2.0](https://www.jsonrpc.org/specification)**（MCP 標準の `method` / `params` / `result`。[Messages](https://modelcontextprotocol.io/specification/2025-11-25/basic#messages)） |
+| 本文のログ | **出さない**（本リポジトリ固有。`McpHttpTraceFilter` は method・path・status のみ。設計書 9 章） |
 
 Cursor はホスト上で動き、`.cursor/mcp.json` の URL へ接続します。Dev Container 内のエディタから見ても、多くの場合 MCP クライアントはホスト側です。
+
+### 1.1 MCP 標準と本リポジトリ固有
+
+JSON-RPC のメソッド名と結果の枠は [Model Context Protocol 仕様 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25) の標準です。この文書の手順（`initialize` から `tools/call` まで）はその版の定義に対応します。例の `protocolVersion`（`2024-11-05`）は、クライアントとサーバーが合意した版の値です。ツールの中身（名前・引数）と、既存 API への転送、トレースログは本リポジトリ固有です。
+
+| 区分 | この文書に出てくるもの |
+| --- | --- |
+| **MCP 標準** | ライフサイクル: [`initialize`](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization)、[`notifications/initialized`](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization)。ツール: [`tools/list`](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#listing-tools)、[`tools/call`](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#calling-tools)。結果の枠: [`name` / `description` / `inputSchema`](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#tool)、[`content`（`type` / `text`）](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#text-content)、[`isError`](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#error-handling)。トランスポート: [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)（`POST`、`Accept: application/json, text/event-stream`） |
+| **本リポジトリ固有** | 待ち受け URL（`http://localhost:8090/mcp`。パスは仕様で固定されていない）、`serverInfo` の名前と版、ツール 9 個の定義（`list_owners` や引数 `lastName` など）、既存 REST API への呼び出し、`[mcp-trace]` ログ、エラー文言 |
+
+`initialize` 応答の [`capabilities.tools`](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#capabilities) / [`capabilities.resources`](https://modelcontextprotocol.io/specification/2025-11-25/server/resources) も標準の能力宣言です。Resource の中身（OpenAPI）はこの文書の手順では使いません。
+
+型定義の一覧は [Schema Reference](https://modelcontextprotocol.io/specification/2025-11-25/schema)（`InitializeRequest`、`ListToolsResult`、`CallToolResult` など）です。
 
 ## 2. 接続時のやり取り（ツール実行の前）
 
 初回接続時、Cursor はおおよそ次の JSON-RPC を `POST /mcp` で送ります（**実際の JSON は Cursor / MCP SDK のバージョンで細部が異なる場合があります**）。
 
-### 2.1 `initialize`（クライアント → サーバー）
+### 2.1 `initialize`（MCP 標準・クライアント → サーバー）
 
-クライアントがプロトコル版と能力を伝え、サーバー情報を得ます。
+クライアントがプロトコル版と能力を伝え、サーバー情報を得ます。メソッド名と `params` の枠（`protocolVersion`、`capabilities`、`clientInfo`）は MCP 標準です（[Lifecycle / Initialization](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization)）。`clientInfo.name` の `"cursor"` はクライアント側の値です。
 
 ```json
 {
@@ -39,9 +52,9 @@ Cursor はホスト上で動き、`.cursor/mcp.json` の URL へ接続します�
 }
 ```
 
-### 2.2 `initialize` のレスポンス（サーバー → クライアント）
+### 2.2 `initialize` のレスポンス（MCP 標準・サーバー → クライアント）
 
-`mcp-server` は `application.yml` の `spring.ai.mcp.server.name` などを含めて応答します。
+応答の枠（`protocolVersion`、`capabilities`、`serverInfo`）は MCP 標準です（[Lifecycle / Initialization](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization)、能力の一覧は [Capability Negotiation](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#capability-negotiation)）。`serverInfo.name` / `version` の値は `application.yml` の `spring.ai.mcp.server.name` など、本リポジトリの設定です。
 
 ```json
 {
@@ -61,9 +74,13 @@ Cursor はホスト上で動き、`.cursor/mcp.json` の URL へ接続します�
 }
 ```
 
-その後、クライアントは `notifications/initialized` を送ることがあります（応答なしの通知）。
+その後、クライアントは `notifications/initialized` を送ることがあります（MCP 標準の通知。応答はありません。[Lifecycle / Initialization](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle#initialization)）。
 
-### 2.3 `tools/list`（ツール一覧）
+### 2.3 `tools/list`（MCP 標準・ツール一覧）
+
+メソッド `tools/list` と、応答の `result.tools[]`（`name`、`description`、`inputSchema`）は MCP 標準です（[Listing Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#listing-tools)、ツール定義は [Tool](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#tool)）。並ぶ 9 件の名前とスキーマは本リポジトリ固有で、`tools/OwnerTools.java` などの `@McpTool` から Spring AI が生成します。
+
+リクエスト（MCP 標準）:
 
 ```json
 {
@@ -74,7 +91,7 @@ Cursor はホスト上で動き、`.cursor/mcp.json` の URL へ接続します�
 }
 ```
 
-レスポンスには `list_owners` など **9 個のツール**定義（`name`、`description`、入力スキーマ）が含まれます。実装は `tools/OwnerTools.java` などの `@McpTool` から Spring AI が生成します。
+レスポンス（枠は MCP 標準、`name` などの値は本リポジトリ固有）:
 
 ```json
 {
@@ -100,7 +117,7 @@ Cursor はホスト上で動き、`.cursor/mcp.json` の URL へ接続します�
 
 ## 3. ツール 1 回分の詳細（`list_owners` / `lastName=Davis`）
 
-Agent チャットで飼い主検索を依頼すると、Cursor が **`tools/call`** を送ります。
+Agent チャットで飼い主検索を依頼すると、Cursor が **`tools/call`**（MCP 標準。[Calling Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#calling-tools)）を送ります。`params.name` の `list_owners` と `arguments.lastName` は本リポジトリ固有です。
 
 ### 3.1 Cursor からのリクエスト（代表例）
 
@@ -112,6 +129,8 @@ Host: localhost:8090
 Content-Type: application/json
 Accept: application/json, text/event-stream
 ```
+
+`POST` と `Accept` に `application/json` と `text/event-stream` を並べる形は [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http) の規定です。パス `/mcp` とポートは本リポジトリの設定です。
 
 本文（JSON-RPC）:
 
@@ -129,11 +148,11 @@ Accept: application/json, text/event-stream
 }
 ```
 
-| フィールド | 意味 |
-| --- | --- |
-| `method` | 常に `tools/call`（ツール実行） |
-| `params.name` | MCP ツール名（`OwnerTools` の `@McpTool(name = "list_owners")`） |
-| `params.arguments` | ツール引数（Java の `listOwners(String lastName)` にバインド） |
+| フィールド | 区分 | 意味 |
+| --- | --- | --- |
+| `method` | MCP 標準 | `tools/call`（[Calling Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#calling-tools)） |
+| `params.name` | 本リポジトリ固有 | `OwnerTools` の `@McpTool(name = "list_owners")`。名前を `name` で渡す形は仕様どおり |
+| `params.arguments` | 本リポジトリ固有 | ツール引数（Java の `listOwners(String lastName)` にバインド）。引数を `arguments` に入れる形は [Calling Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#calling-tools) |
 
 ### 3.2 mcp-server 内部の処理順
 
@@ -186,7 +205,7 @@ sequenceDiagram
 
 ### 3.4 mcp-server から Cursor へのレスポンス（代表例）
 
-Spring AI / MCP SDK がツール戻り値を **CallToolResult** に包みます。構造は次のとおりです（本文は Jackson により JSON 文字列化されることが多い）。
+Spring AI / MCP SDK がツール戻り値を **CallToolResult**（MCP 標準。[Calling Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#calling-tools)、本文の型は [Text Content](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#text-content)）に包みます。`content` と `isError` の枠は標準で、`text` の中身は本リポジトリの戻り値です（Jackson により JSON 文字列化されることが多い）。
 
 ```json
 {
@@ -204,10 +223,11 @@ Spring AI / MCP SDK がツール戻り値を **CallToolResult** に包みます�
 }
 ```
 
-| フィールド | 意味 |
-| --- | --- |
-| `result.content` | MCP がモデル／UI に渡すペイロード（本サーバーは主に `type: text`） |
-| `result.isError` | `false` なら成功。ツール内で `PetclinicApiException` などが起きた場合は `true` になり、メッセージが content に入る |
+| フィールド | 区分 | 意味 |
+| --- | --- | --- |
+| `result.content` | MCP 標準 | モデル／UI に渡すペイロード。要素の `type` / `text` も標準（[Text Content](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#text-content)。本サーバーは主に `type: text`） |
+| `result.content[].text` | 本リポジトリ固有 | ツールの戻り値（飼い主 JSON の文字列、または `ApiErrorTranslator` の文言） |
+| `result.isError` | MCP 標準 | `false` なら成功。`PetclinicApiException` などが起きた場合は `true` になり、メッセージが content に入る（[Error Handling](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#error-handling)） |
 
 Cursor の **Agent チャット**には、この `text` を要約した自然文として表示されます。生 JSON を見るにはサーバーログの `resultPreview` か、下記の API を直接叩く方が確実です。
 
@@ -227,7 +247,7 @@ Cursor の **Agent チャット**には、この `text` を要約した自然文
 }
 ```
 
-backend が 404 のとき、ツールは `PetclinicApiException` を投げ、クライアント向けには概ね次の形になります（文言は `ApiErrorTranslator` のメッセージ）。
+backend が 404 のとき、ツールは `PetclinicApiException` を投げ、クライアント向けには概ね次の形になります。`result` の枠（`content` / `isError: true`）は MCP 標準のツール実行エラー（[Error Handling](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#error-handling)）で、文言は `ApiErrorTranslator`（本リポジトリ固有）です。
 
 ```json
 {
