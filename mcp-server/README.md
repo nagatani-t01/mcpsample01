@@ -50,17 +50,19 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
 
 2. **プロジェクトの MCP 設定を確認する**
 
-   リポジトリ直下の [`.cursor/mcp.json`](../.cursor/mcp.json) に次が入っています（Cursor の MCP クライアントは通常 **ホスト側** で動くため、`localhost` を使います）。
+   リポジトリ直下の [`.cursor/mcp.json`](../.cursor/mcp.json) で URL を指定します。Cursor の MCP クライアントは通常 **Windows 側** で動きます。WSL 上の Docker に対して Windows の `localhost:8090` が `ECONNREFUSED` になる場合は、WSL の IP を使います（`hostname -I | awk '{print $1}'`。再起動で変わることがあります）。
 
    ```json
    {
      "mcpServers": {
        "petclinic": {
-         "url": "http://localhost:8090/mcp"
+         "url": "http://192.168.40.58:8090/mcp"
        }
      }
    }
    ```
+
+   WSL から `curl http://127.0.0.1:8090/mcp` が通るのに Cursor だけ失敗するときは、上記の IP 指定を疑ってください。
 
 3. **Cursor で設定を読み込む**
 
@@ -118,7 +120,7 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
 
 | 症状 | 確認すること |
 | --- | --- |
-| Connection refused（`ECONNREFUSED 127.0.0.1:8090`） | `mcp-server` が起動しているか。ホスト（WSL / PowerShell）で `docker compose -f docker-compose.dev.yml ps mcp-server` と `curl http://localhost:8090/mcp` を確認。Compose の ports は `8090:8090`（`127.0.0.1` 限定だと Windows 側 Cursor から届かないことがある） |
+| Connection refused（`ECONNREFUSED 127.0.0.1:8090`） | WSL では届くが Windows / Cursor から `127.0.0.1` も WSL IP も `000` のときは、WSL の localhost 転送が無効。`%UserProfile%\.wslconfig` を**新規作成**（最初は存在しない）し `networkingMode=mirrored` を書いて PowerShell で `wsl --shutdown` 後、Docker を再起動。または管理者 PowerShell で `netsh interface portproxy add v4tov4 listenport=8090 listenaddress=127.0.0.1 connectport=8090 connectaddress=<WSLのIP>` |
 | ツールは動くが結果が空／エラー | `backend` が起動しているか、`PETCLINIC_API_BASE_URL` が `http://backend:9966/petclinic/api` になっているか（Compose 内） |
 | 一覧にサーバーが出ない | `.cursor/mcp.json` の場所（リポジトリルート）、Reload Window、Docker / Dev Container の再起動 |
 
