@@ -104,7 +104,7 @@ paths:
           required: false
           schema:
             type: string
-            example: Davis
+            example: 鈴木
       responses:
         200:
           description: Owner details found and returned.
@@ -1927,30 +1927,28 @@ components:
           type: string
           minLength: 1
           maxLength: 30
-          pattern: '^[a-zA-Z]*$'
-          example: George
+          example: 太郎
         lastName:
           title: Last name
           description: The last name of the pet owner.
           type: string
           minLength: 1
           maxLength: 30
-          pattern: '^[a-zA-Z]*$'
-          example: Franklin
+          example: 山田
         address:
           title: Address
           description: The postal address of the pet owner.
           type: string
           minLength: 1
           maxLength: 255
-          example: '110 W. Liberty St.'
+          example: '千代田区丸の内1-1-1'
         city:
           title: City
           description: The city of the pet owner.
           type: string
           minLength: 1
           maxLength: 80
-          example: Madison
+          example: 東京
         telephone:
           title: Telephone number
           description: The telephone number of the pet owner.
@@ -1958,7 +1956,7 @@ components:
           minLength: 1
           maxLength: 20
           pattern: '^[0-9]*$'
-          example: '6085551023'
+          example: '03011112222'
       required:
         - firstName
         - lastName
@@ -2057,16 +2055,14 @@ components:
           type: string
           minLength: 1
           maxLength: 30
-          pattern: '^[a-zA-Z]*$'
-          example: 'James'
+          example: '健'
         lastName:
           title: Last name
           description: The last name of the vet.
           type: string
           minLength: 1
           maxLength: 30
-          pattern: '^[a-zA-Z]*$'
-          example: 'Carter'
+          example: '田中'
         specialties:
           title: Specialties
           description: The specialties of the vet.

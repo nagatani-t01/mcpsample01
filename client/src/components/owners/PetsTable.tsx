@@ -7,8 +7,8 @@ const VisitsTable = ({ ownerId, pet }: { ownerId: number, pet: IPet }) => (
   <table className='table-condensed'>
     <thead>
       <tr>
-        <th>来店日</th>
-        <th>来店内容</th>
+        <th>来院日</th>
+        <th>来院内容</th>
       </tr>
     </thead>
     <tbody>
@@ -20,10 +20,10 @@ const VisitsTable = ({ ownerId, pet }: { ownerId: number, pet: IPet }) => (
       ))}
       <tr>
         <td>
-          <Link to={`/owners/${ownerId}/pets/${pet.id}/edit`}>Edit Pet</Link>
+          <Link to={`/owners/${ownerId}/pets/${pet.id}/edit`}>ペットを編集</Link>
         </td>
         <td>
-          <Link to={`/owners/${ownerId}/pets/${pet.id}/visits/new`}>Add Visit</Link>
+          <Link to={`/owners/${ownerId}/pets/${pet.id}/visits/new`}>来院を追加</Link>
         </td>
       </tr>
     </tbody>
@@ -32,7 +32,7 @@ const VisitsTable = ({ ownerId, pet }: { ownerId: number, pet: IPet }) => (
 
 export default ({ owner }: { owner: IOwner }) => (
   <section>
-    <h2>ペットと来店</h2>
+    <h2>ペットと来院</h2>
     <table className='table table-striped'>
       <tbody>
         {owner.pets.map(pet => (
@@ -41,9 +41,9 @@ export default ({ owner }: { owner: IOwner }) => (
               <dl className='dl-horizontal'>
                 <dt>ペット名</dt>
                 <dd>{pet.name}</dd>
-                <dt>誕生日</dt>
+                <dt>生年月日</dt>
                 <dd>{pet.birthDate}</dd>
-                <dt>ペット種類</dt>
+                <dt>種別</dt>
                 <dd>{pet.type.name}</dd>
               </dl>
             </td>

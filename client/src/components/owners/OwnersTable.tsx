@@ -6,7 +6,7 @@ const renderRow = (owner: IOwner) => (
   <tr key={owner.id}>
     <td>
       <a href={`/owners/${owner.id}`}>
-        {owner.firstName} {owner.lastName}
+        {owner.lastName} {owner.firstName}
       </a>
     </td>
     <td className='hidden-sm hidden-xs'>{owner.address}</td>
@@ -18,15 +18,15 @@ const renderRow = (owner: IOwner) => (
 
 const renderOwners = (owners: IOwner[]) => (
   <section>
-    <h2>{owners.length} Owners found</h2>
+    <h2>{owners.length} 件の飼い主が見つかりました</h2>
     <table className='table table-striped'>
       <thead>
         <tr>
-          <th>飼い主</th>
-          <th className='hidden-sm hidden-xs'>Address</th>
-          <th>住所２</th>
+          <th>氏名</th>
+          <th className='hidden-sm hidden-xs'>住所</th>
+          <th>市区町村</th>
           <th>電話番号</th>
-          <th className='hidden-xs'>Pets</th>
+          <th className='hidden-xs'>ペット</th>
         </tr>
       </thead>
       <tbody>

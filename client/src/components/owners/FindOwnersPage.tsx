@@ -99,12 +99,12 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
     return (
       <span>
         <section>
-          <h2>Find Owners</h2>
+          <h2>飼い主を探す</h2>
 
           <form className='form-horizontal' action='javascript:void(0)'>
             <div className='form-group'>
               <div className='control-group' id='lastName'>
-                <label className='col-sm-2 control-label'>Last name </label>
+                <label className='col-sm-2 control-label'>姓</label>
                 <div className='col-sm-10'>
                   <input className='form-control' name='filter' value={filter || ''} onChange={this.onFilterChange} size={30} maxLength={80} />
                   { /* <span className='help-inline'><form:errors path='*'/></span> TODO */}
@@ -113,13 +113,13 @@ export default class FindOwnersPage extends React.Component<IFindOwnersPageProps
             </div>
             <div className='form-group'>
               <div className='col-sm-offset-2 col-sm-10'>
-                <button type='button' onClick={this.submitSearchForm} className='btn btn-default'>Find Owner</button>
+                <button type='button' onClick={this.submitSearchForm} className='btn btn-default'>検索</button>
               </div>
             </div>
           </form>
         </section>
         <OwnersTable owners={owners} />
-        <Link className='btn btn-default' to='/owners/new'> Add Owner</Link>
+        <Link className='btn btn-default' to='/owners/new'>飼い主を追加</Link>
       </span>
     );
   }

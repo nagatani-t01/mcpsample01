@@ -51,13 +51,13 @@ public class OwnerTools {
     @McpTool(
         name = "create_owner",
         description = """
-            飼い主を新規登録します。firstName/lastName は英字のみ 1〜30 文字、address は 1〜255 文字、
+            飼い主を新規登録します。firstName/lastName は 1〜30 文字、address は 1〜255 文字、
             city は 1〜80 文字、telephone は数字のみ 1〜20 文字です。""",
         annotations = @McpTool.McpAnnotations(readOnlyHint = false, destructiveHint = false)
     )
     public Owner createOwner(
-        @McpToolParam(description = "名（英字）", required = true) String firstName,
-        @McpToolParam(description = "姓（英字）", required = true) String lastName,
+        @McpToolParam(description = "名", required = true) String firstName,
+        @McpToolParam(description = "姓", required = true) String lastName,
         @McpToolParam(description = "住所", required = true) String address,
         @McpToolParam(description = "都市", required = true) String city,
         @McpToolParam(description = "電話番号（数字のみ）", required = true) String telephone

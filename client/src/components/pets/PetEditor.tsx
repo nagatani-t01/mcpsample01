@@ -76,7 +76,7 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
     const { owner, pettypes } = this.props;
     const { editablePet, error } = this.state;
 
-    const formLabel = editablePet.isNew ? 'Add Pet' : 'Update Pet';
+    const formLabel = editablePet.isNew ? 'ペットの登録' : 'ペットの更新';
 
     return (
       <span>
@@ -84,13 +84,13 @@ export default class PetEditor extends React.Component<IPetEditorProps, IPetEdit
         <form className='form-horizontal' method='POST' action={url('/api/owner')}>
           <div className='form-group has-feedback'>
             <div className='form-group'>
-              <label className='col-sm-2 control-label'>Owner</label>
-              <div className='col-sm-10'>{owner.firstName} {owner.lastName}</div>
+              <label className='col-sm-2 control-label'>飼い主</label>
+              <div className='col-sm-10'>{owner.lastName} {owner.firstName}</div>
             </div>
 
-            <Input object={editablePet} error={error} label='Name' name='name' onChange={this.onInputChange} />
-            <DateInput object={editablePet} error={error} label='Birth date' name='birthDate' onChange={this.onInputChange} />
-            <SelectInput object={editablePet} error={error} label='Type' name='typeId' options={pettypes} onChange={this.onInputChange} />
+            <Input object={editablePet} error={error} label='名前' name='name' onChange={this.onInputChange} />
+            <DateInput object={editablePet} error={error} label='生年月日' name='birthDate' onChange={this.onInputChange} />
+            <SelectInput object={editablePet} error={error} label='種別' name='typeId' options={pettypes} onChange={this.onInputChange} />
           </div>
           <div className='form-group'>
             <div className='col-sm-offset-2 col-sm-10'>

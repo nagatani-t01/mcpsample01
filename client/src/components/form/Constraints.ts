@@ -1,7 +1,7 @@
 import { IConstraint } from '../../types';
 
 export const NotEmpty: IConstraint = {
-  message:    'Enter at least one character',
+  message:    '1文字以上入力してください',
   validate: (value) => {
     return !!value && value.length > 0;
   }
@@ -10,7 +10,7 @@ export const NotEmpty: IConstraint = {
 export const Digits = (digits: number): IConstraint => {
   const reg = new RegExp('^\\d{1,' + digits + '}$');
   return {
-    message: 'Must be a number with at most ' + digits + ' digits',
+    message: digits + '桁以内の数字で入力してください',
     validate: (value) => {
       return !!value && value.match(reg) !== null;
     }

@@ -38,7 +38,7 @@ export default class OwnersPage extends React.Component<IOwnersPageProps, IOwner
     const { owner } = this.state;
 
     if (!owner) {
-      return <h2>No Owner loaded</h2>;
+      return <h2>飼い主情報を読み込み中…</h2>;
     }
 
     return (

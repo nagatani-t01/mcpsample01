@@ -69,18 +69,18 @@ export default class OwnerEditor extends React.Component<IOwnerEditorProps, IOwn
     const { owner, error } = this.state;
     return (
       <span>
-        <h2>New Owner</h2>
+        <h2>{owner.isNew ? '飼い主の新規登録' : '飼い主の編集'}</h2>
         <form className='form-horizontal' method='POST' action={url('/api/owner')}>
           <div className='form-group has-feedback'>
-            <Input object={owner} error={error} constraint={NotEmpty} label='First Name' name='firstName' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='Last Name' name='lastName' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='Address' name='address' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={NotEmpty} label='City' name='city' onChange={this.onInputChange} />
-            <Input object={owner} error={error} constraint={Digits(10)} label='Telephone' name='telephone' onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='名' name='firstName' onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='姓' name='lastName' onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='住所' name='address' onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={NotEmpty} label='市区町村' name='city' onChange={this.onInputChange} />
+            <Input object={owner} error={error} constraint={Digits(11)} label='電話番号' name='telephone' onChange={this.onInputChange} />
           </div>
           <div className='form-group'>
             <div className='col-sm-offset-2 col-sm-10'>
-              <button className='btn btn-default' type='submit' onClick={this.onSubmit}>{owner.isNew ? 'Add Owner' : 'Update Owner'}</button>
+              <button className='btn btn-default' type='submit' onClick={this.onSubmit}>{owner.isNew ? '登録' : '更新'}</button>
             </div>
           </div>
         </form>

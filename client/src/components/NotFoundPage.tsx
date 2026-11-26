@@ -1,3 +1,3 @@
 import * as React from 'react';
 
-export default () => <h3>The requested page has not been found.</h3>;
+export default () => <h3>お探しのページは見つかりませんでした。</h3>;

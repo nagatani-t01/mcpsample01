@@ -58,20 +58,20 @@ abstract class AbstractClinicServiceTests {
 
     @Test
     void shouldFindOwnersByLastName() {
-        Collection<Owner> owners = this.clinicService.findOwnerByLastName("Davis");
+        Collection<Owner> owners = this.clinicService.findOwnerByLastName("鈴木");
         assertThat(owners.size()).isEqualTo(2);
 
-        owners = this.clinicService.findOwnerByLastName("Daviss");
+        owners = this.clinicService.findOwnerByLastName("鈴木々");
         assertThat(owners.isEmpty()).isTrue();
     }
 
     @Test
     void shouldFindSingleOwnerWithPet() {
         Owner owner = this.clinicService.findOwnerById(1);
-        assertThat(owner.getLastName()).startsWith("Franklin");
+        assertThat(owner.getLastName()).startsWith("山田");
         assertThat(owner.getPets().size()).isEqualTo(1);
         assertThat(owner.getPets().get(0).getType()).isNotNull();
-        assertThat(owner.getPets().get(0).getType().getName()).isEqualTo("cat");
+        assertThat(owner.getPets().get(0).getType().getName()).isEqualTo("猫");
     }
 
     @Test
@@ -111,8 +111,8 @@ abstract class AbstractClinicServiceTests {
     @Test
     void shouldFindPetWithCorrectId() {
         Pet pet7 = this.clinicService.findPetById(7);
-        assertThat(pet7.getName()).startsWith("Samantha");
-        assertThat(pet7.getOwner().getFirstName()).isEqualTo("Jean");
+        assertThat(pet7.getName()).startsWith("サマンサ");
+        assertThat(pet7.getOwner().getFirstName()).isEqualTo("健太");
 
     }
 
@@ -168,10 +168,10 @@ abstract class AbstractClinicServiceTests {
         Collection<Vet> vets = this.clinicService.findVets();
 
         Vet vet = EntityUtils.getById(vets, Vet.class, 3);
-        assertThat(vet.getLastName()).isEqualTo("Douglas");
+        assertThat(vet.getLastName()).isEqualTo("高橋");
         assertThat(vet.getNrOfSpecialties()).isEqualTo(2);
-        assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("dentistry");
-        assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("surgery");
+        assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("歯科");
+        assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("外科");
     }
 
     @Test
@@ -204,9 +204,9 @@ abstract class AbstractClinicServiceTests {
     void shouldFindAllPets(){
         Collection<Pet> pets = this.clinicService.findAllPets();
         Pet pet1 = EntityUtils.getById(pets, Pet.class, 1);
-        assertThat(pet1.getName()).isEqualTo("Leo");
+        assertThat(pet1.getName()).isEqualTo("レオ");
         Pet pet3 = EntityUtils.getById(pets, Pet.class, 3);
-        assertThat(pet3.getName()).isEqualTo("Rosy");
+        assertThat(pet3.getName()).isEqualTo("ロージー");
     }
 
     @Test
@@ -226,16 +226,16 @@ abstract class AbstractClinicServiceTests {
     void shouldFindVisitDyId(){
     	Visit visit = this.clinicService.findVisitById(1);
     	assertThat(visit.getId()).isEqualTo(1);
-    	assertThat(visit.getPet().getName()).isEqualTo("Samantha");
+    	assertThat(visit.getPet().getName()).isEqualTo("サマンサ");
     }
 
     @Test
     void shouldFindAllVisits(){
         Collection<Visit> visits = this.clinicService.findAllVisits();
         Visit visit1 = EntityUtils.getById(visits, Visit.class, 1);
-        assertThat(visit1.getPet().getName()).isEqualTo("Samantha");
+        assertThat(visit1.getPet().getName()).isEqualTo("サマンサ");
         Visit visit3 = EntityUtils.getById(visits, Visit.class, 3);
-        assertThat(visit3.getPet().getName()).isEqualTo("Max");
+        assertThat(visit3.getPet().getName()).isEqualTo("マックス");
     }
 
     @Test
@@ -287,8 +287,8 @@ abstract class AbstractClinicServiceTests {
     @Test
     void shouldFindVetDyId(){
     	Vet vet = this.clinicService.findVetById(1);
-    	assertThat(vet.getFirstName()).isEqualTo("James");
-    	assertThat(vet.getLastName()).isEqualTo("Carter");
+    	assertThat(vet.getFirstName()).isEqualTo("健");
+    	assertThat(vet.getLastName()).isEqualTo("田中");
     }
 
     @Test
@@ -337,9 +337,9 @@ abstract class AbstractClinicServiceTests {
     void shouldFindAllOwners(){
         Collection<Owner> owners = this.clinicService.findAllOwners();
         Owner owner1 = EntityUtils.getById(owners, Owner.class, 1);
-        assertThat(owner1.getFirstName()).isEqualTo("George");
+        assertThat(owner1.getFirstName()).isEqualTo("太郎");
         Owner owner3 = EntityUtils.getById(owners, Owner.class, 3);
-        assertThat(owner3.getFirstName()).isEqualTo("Eduardo");
+        assertThat(owner3.getFirstName()).isEqualTo("一郎");
     }
 
     @Test
@@ -358,16 +358,16 @@ abstract class AbstractClinicServiceTests {
     @Test
     void shouldFindPetTypeById(){
     	PetType petType = this.clinicService.findPetTypeById(1);
-    	assertThat(petType.getName()).isEqualTo("cat");
+    	assertThat(petType.getName()).isEqualTo("猫");
     }
 
     @Test
     void shouldFindAllPetTypes(){
         Collection<PetType> petTypes = this.clinicService.findAllPetTypes();
         PetType petType1 = EntityUtils.getById(petTypes, PetType.class, 1);
-        assertThat(petType1.getName()).isEqualTo("cat");
+        assertThat(petType1.getName()).isEqualTo("猫");
         PetType petType3 = EntityUtils.getById(petTypes, PetType.class, 3);
-        assertThat(petType3.getName()).isEqualTo("lizard");
+        assertThat(petType3.getName()).isEqualTo("トカゲ");
     }
 
     @Test
@@ -414,16 +414,16 @@ abstract class AbstractClinicServiceTests {
     @Test
     void shouldFindSpecialtyById(){
     	Specialty specialty = this.clinicService.findSpecialtyById(1);
-    	assertThat(specialty.getName()).isEqualTo("radiology");
+    	assertThat(specialty.getName()).isEqualTo("放射線科");
     }
 
     @Test
     void shouldFindAllSpecialtys(){
         Collection<Specialty> specialties = this.clinicService.findAllSpecialties();
         Specialty specialty1 = EntityUtils.getById(specialties, Specialty.class, 1);
-        assertThat(specialty1.getName()).isEqualTo("radiology");
+        assertThat(specialty1.getName()).isEqualTo("放射線科");
         Specialty specialty3 = EntityUtils.getById(specialties, Specialty.class, 3);
-        assertThat(specialty3.getName()).isEqualTo("dentistry");
+        assertThat(specialty3.getName()).isEqualTo("歯科");
     }
 
     @Test
@@ -477,13 +477,13 @@ abstract class AbstractClinicServiceTests {
     @Transactional
     void shouldFindSpecialtiesByNameIn() {
         Specialty specialty1 = new Specialty();
-        specialty1.setName("radiology");
+        specialty1.setName("放射線科");
         specialty1.setId(1);
         Specialty specialty2 = new Specialty();
-        specialty2.setName("surgery");
+        specialty2.setName("外科");
         specialty2.setId(2);
         Specialty specialty3 = new Specialty();
-        specialty3.setName("dentistry");
+        specialty3.setName("歯科");
         specialty3.setId(3);
         List<Specialty> expectedSpecialties = List.of(specialty1, specialty2, specialty3);
         Set<String> specialtyNames = expectedSpecialties.stream()
@@ -503,7 +503,7 @@ abstract class AbstractClinicServiceTests {
     @Test
     @Transactional
     void shouldFindPetTypeByName(){
-        PetType petType = this.clinicService.findPetTypeByName("cat");
+        PetType petType = this.clinicService.findPetTypeByName("猫");
         assertThat(petType.getId()).isEqualTo(1);
     }
 }

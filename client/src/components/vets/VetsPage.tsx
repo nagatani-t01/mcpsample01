@@ -28,7 +28,7 @@ export default class VetsPage extends React.Component<void, IVetsPageState> {
     const { vets } = this.state;
 
     if (!vets) {
-      return <h2>Veterinarians</h2>;
+      return <h2>獣医師</h2>;
     }
 
     return (
@@ -37,7 +37,7 @@ export default class VetsPage extends React.Component<void, IVetsPageState> {
         <table className='table table-striped'>
           <thead>
             <tr>
-              <th>獣医師名</th>
+              <th>氏名</th>
               <th>専門</th>
             </tr>
           </thead>
@@ -45,8 +45,8 @@ export default class VetsPage extends React.Component<void, IVetsPageState> {
 
             {vets.map(vet => (
               <tr key={vet.id}>
-                <td>{vet.firstName} {vet.lastName}</td>
-                <td>{vet.specialties.length > 0 ? vet.specialties.map(specialty => specialty.name).join(', ') : 'none'}</td>
+                <td>{vet.lastName} {vet.firstName}</td>
+                <td>{vet.specialties.length > 0 ? vet.specialties.map(specialty => specialty.name).join('、') : 'なし'}</td>
               </tr>
             ))}
           </tbody>

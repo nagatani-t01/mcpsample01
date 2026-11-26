@@ -361,8 +361,8 @@ Dev Container に接続したエディタで MCP がどちら側で動くかは�
 
 | 指示の例 | 使われるツール | 照合先 |
 | --- | --- | --- |
-| 「Davis さんの飼い主情報を教えて」 | `list_owners` | 画面の Find Owners で `Davis` を検索した結果（Betty Davis、Harold Davis） |
-| 「飼い主 ID 1 のペットは？」 | `get_owner` | 画面の George Franklin の詳細（Leo、cat） |
+| 「鈴木さんの飼い主情報を教えて」 | `list_owners` | 画面の Find Owners で `鈴木` を検索した結果（鈴木 花子、鈴木 次郎） |
+| 「飼い主 ID 1 のペットは？」 | `get_owner` | 画面の 山田 太郎 の詳細（レオ、cat） |
 | 「獣医の一覧と専門分野を見せて」 | `list_vets` | 画面の Veterinarians 一覧 |
 | 「登録できるペットの種類は？」 | `list_pet_types` | 画面の Pet Types 一覧 |
 | 「ペット ID 8 の来院記録は？」 | `list_visits` | `GET /api/visits` のうち `petId` が 8 のもの |

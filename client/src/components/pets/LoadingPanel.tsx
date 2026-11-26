@@ -5,7 +5,7 @@ export default () => (
     <h2>ペット</h2>
     <form className='form-horizontal' method='POST'>
       <div className='form-group has-feedback'>
-        Loading...
+        読み込み中…
       </div>
     </form>
   </span>

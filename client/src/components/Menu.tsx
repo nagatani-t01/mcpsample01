@@ -19,25 +19,25 @@ export default ({ name }: { name: string }) => (
       </div>
       <div className='navbar-collapse collapse' id='main-navbar'>
         <ul className='nav navbar-nav navbar-right'>
-          <MenuItem active={name === '/'} url='/' title='home page'>
+          <MenuItem active={name === '/'} url='/' title='ホーム'>
             <span className='glyphicon glyphicon-home' aria-hidden='true'></span>&nbsp;
             <span>ホーム</span>
           </MenuItem>
 
-          <MenuItem active={name.startsWith('/owners')} url='/owners/list' title='find owners'>
+          <MenuItem active={name.startsWith('/owners')} url='/owners/list' title='飼い主を探す'>
             <span className='glyphicon glyphicon-search' aria-hidden='true'></span>&nbsp;
             <span>飼い主</span>
           </MenuItem>
 
-          <MenuItem active={name === '/vets'} url='/vets' title='veterinarians'>
+          <MenuItem active={name === '/vets'} url='/vets' title='獣医師一覧'>
             <span className='glyphicon glyphicon-th-list' aria-hidden='true'></span>&nbsp;
             <span>獣医師</span>
           </MenuItem>
 
           <MenuItem active={name === '/error'} url='/error'
-            title='trigger a RuntimeException to see how it is handled'>
+            title='エラー画面の確認'>
             <span className='glyphicon glyphicon-warning-sign' aria-hidden='true'></span>&nbsp;
-            <span>Error</span>
+            <span>エラー</span>
           </MenuItem>
         </ul>
       </div>

@@ -88,7 +88,7 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
 
   render() {
     if (!this.state) {
-      return <h2>Loading...</h2>;
+      return <h2>読み込み中…</h2>;
     }
 
     const { owner, error, visit } = this.state;
@@ -98,18 +98,18 @@ export default class VisitsPage extends React.Component<IVisitsPageProps, IVisit
 
     return (
       <div>
-        <h2>来店</h2>
+        <h2>来院の登録</h2>
         <b>ペット</b>
         <PetDetails owner={owner} pet={pet} />
 
         <form className='form-horizontal' method='POST' action={url('/api/owner')}>
           <div className='form-group has-feedback'>
-            <DateInput object={visit} error={error} label='Date' name='date' onChange={this.onInputChange} />
-            <Input object={visit} error={error} constraint={NotEmpty} label='Description' name='description' onChange={this.onInputChange} />
+            <DateInput object={visit} error={error} label='来院日' name='date' onChange={this.onInputChange} />
+            <Input object={visit} error={error} constraint={NotEmpty} label='来院内容' name='description' onChange={this.onInputChange} />
           </div>
           <div className='form-group'>
             <div className='col-sm-offset-2 col-sm-10'>
-              <button className='btn btn-default' type='submit' onClick={this.onSubmit}>Add Visit</button>
+              <button className='btn btn-default' type='submit' onClick={this.onSubmit}>来院を追加</button>
             </div>
           </div>
         </form>

@@ -30,24 +30,24 @@ export default class ErrorPage extends React.Component<void, IErrorPageState> {
           exMessage: result.body.exMessage
         }
       }))
-      .catch(() => this.setState({ error: { message: 'The error request could not be completed.' } }));
+      .catch(() => this.setState({ error: { message: 'エラー情報の取得に失敗しました。' } }));
   }
 
   render() {
     const { error } = this.state;
 
     return <span>
-      <img src='/images/pets.png' />
+      <img src='/images/pets.png' alt='ペット' />
 
-      <h2>Something happened...</h2>
+      <h2>エラーが発生しました</h2>
       { error ?
         <span>
-          <p><b>Status:</b> {error.status}</p>
-          <p><b>Message:</b> {error.exMessage || error.message}</p>
-          {error.className ? <p><b>Type:</b> {error.className}</p> : null}
+          <p><b>ステータス:</b> {error.status}</p>
+          <p><b>メッセージ:</b> {error.exMessage || error.message}</p>
+          {error.className ? <p><b>種別:</b> {error.className}</p> : null}
         </span>
         :
-        <p><b>Unknown error</b></p>
+        <p><b>不明なエラー</b></p>
       }
     </span>;
   }

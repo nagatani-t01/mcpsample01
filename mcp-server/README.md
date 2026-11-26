@@ -85,19 +85,19 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
    petclinic の MCP ツール list_pet_types を実行して、返ってきたペット種別の名前を全部列挙して。
    ```
 
-   飼い主検索（`list_owners`、`lastName` は `Davis`）。Betty Davis と Harold Davis が出れば成功です。
+   飼い主検索（`list_owners`、`lastName` は `鈴木`）。鈴木 花子 と 鈴木 次郎 が出れば成功です。
 
    ```text
-   petclinic の MCP ツール list_owners を、lastName に Davis を渡して実行して。見つかった飼い主の姓名を列挙して。
+   petclinic の MCP ツール list_owners を、lastName に 鈴木 を渡して実行して。見つかった飼い主の姓名を列挙して。
    ```
 
-   詳細取得（`get_owner`、`ownerId` は `1`）。George Franklin とペット Leo が出れば成功です。
+   詳細取得（`get_owner`、`ownerId` は `1`）。山田 太郎 とペット レオ が出れば成功です。
 
    ```text
    petclinic の MCP ツール get_owner を、ownerId に 1 を渡して実行して。飼い主の名前と、飼っているペットの名前を教えて。
    ```
 
-   獣医一覧（`list_vets`、引数なし）。James Carter などが出れば成功です。
+   獣医一覧（`list_vets`、引数なし）。田中 健 などが出れば成功です。
 
    ```text
    petclinic の MCP ツール list_vets を実行して、獣医の名前を列挙して。
@@ -111,8 +111,8 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
 
 6. **画面・API と突き合わせる**
 
-   - ブラウザで http://localhost:4444 を開き、Find Owners で `Davis`、Veterinarians 一覧など、上記結果と一致するか見ます。
-   - 必要なら `curl http://localhost:9966/petclinic/api/owners?lastName=Davis` と比較します。
+   - ブラウザで http://localhost:4444 を開き、Find Owners で `鈴木`、Veterinarians 一覧など、上記結果と一致するか見ます。
+   - 必要なら `curl http://localhost:9966/petclinic/api/owners?lastName=%E9%88%B4%E6%9C%A8` と比較します。
 
 登録系（`create_owner` など）はデータを増やすため、手動テストは任意です。実行する場合は実行前確認を有効にし、確認後に画面を再読み込みしてください。
 
