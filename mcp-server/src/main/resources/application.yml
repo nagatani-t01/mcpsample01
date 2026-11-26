@@ -23,6 +23,9 @@ petclinic:
     password: ${PETCLINIC_API_PASSWORD:}
   mcp:
     trace-enabled: ${MCP_TRACE_ENABLED:true}
+    privacy:
+      # 個人情報を含むツール結果は grant_personal_data_consent 後のみ返す
+      consent-required: ${MCP_PERSONAL_DATA_CONSENT_REQUIRED:true}
 
 mcp:
   allowed-origins: ${MCP_ALLOWED_ORIGINS:http://localhost,http://127.0.0.1}

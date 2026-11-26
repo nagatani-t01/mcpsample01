@@ -9,14 +9,17 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.mcp.annotation.McpTool;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
  * {@code @McpTool} メソッドの前後で {@code [mcp-trace] tool} ログを出す。
  * ツール名・引数・所要時間・結果プレビュー（最大 500 文字）を記録し、手動テスト時の追跡に使う。
+ * 個人情報ゲート（{@code PersonalDataConsentAspect}）より外側で動かし、同意拒否時は error ログのみにする。
  */
 @Aspect
 @Component
+@Order(100)
 public class McpToolTraceAspect {
 
     private static final Logger log = LoggerFactory.getLogger(McpToolTraceAspect.class);

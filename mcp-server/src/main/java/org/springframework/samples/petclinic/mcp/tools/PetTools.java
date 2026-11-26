@@ -25,7 +25,9 @@ public class PetTools {
 
     @McpTool(
         name = "list_pets",
-        description = "ペット一覧を取得します。ownerId を指定すると、その飼い主のペットだけに絞り込みます。",
+        description = """
+            ペット一覧を取得します。ownerId を指定すると、その飼い主のペットだけに絞り込みます。
+            個人情報を含むため、ユーザー同意後に grant_personal_data_consent を実行済みであること。""",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false)
     )
     public List<Pet> listPets(

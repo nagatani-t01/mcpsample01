@@ -120,7 +120,8 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
 
 | 症状 | 確認すること |
 | --- | --- |
-| Connection refused（`ECONNREFUSED 127.0.0.1:8090`） | WSL では届くが Windows / Cursor から `127.0.0.1` も WSL IP も `000` のときは、WSL の localhost 転送が無効。`%UserProfile%\.wslconfig` を**新規作成**（最初は存在しない）し `networkingMode=mirrored` を書いて PowerShell で `wsl --shutdown` 後、Docker を再起動。または管理者 PowerShell で `netsh interface portproxy add v4tov4 listenport=8090 listenaddress=127.0.0.1 connectport=8090 connectaddress=<WSLのIP>` |
+| Connection refused（`ECONNREFUSED 127.0.0.1:8090`） | WSL では届くが Windows / Cursor から `127.0.0.1` も WSL IP も `000` のときは、WSL の localhost 転送が無効。`.cursor/mcp.json` を WSL IP（`hostname -I`）の `http://<IP>:8090/mcp` にするか、`%UserProfile%\.wslconfig` に `networkingMode=mirrored` を新規作成して `wsl --shutdown` |
+| 個人情報ツールが同意メッセージだけ返す | 想定どおり。ユーザー同意後に `grant_personal_data_consent`（`confirmed=true`）して再実行 |
 | ツールは動くが結果が空／エラー | `backend` が起動しているか、`PETCLINIC_API_BASE_URL` が `http://backend:9966/petclinic/api` になっているか（Compose 内） |
 | 一覧にサーバーが出ない | `.cursor/mcp.json` の場所（リポジトリルート）、Reload Window、Docker / Dev Container の再起動 |
 
@@ -194,6 +195,17 @@ environment:
 
 ツール呼び出しの成否は **Cursor Settings → MCP** のサーバー状態や、Agent チャットの応答で確認します。MCP サーバー側の処理内容は、上記 **`mcp-server` コンテナのログ** を見てください。
 
+## 個人情報の同意ゲート
+
+飼い主・ペット・獣医・来院など **個人情報を含むツール結果** は、ユーザー同意なしでは返しません。
+
+1. Agent が該当ツールを呼ぶと、同意要求メッセージだけが返り、実データは含まれません。
+2. ユーザーに同意を確認する。
+3. 同意後、`grant_personal_data_consent` を `confirmed=true` で実行する。
+4. 同じ照会ツールをもう一度実行する。
+
+関連ツール: `grant_personal_data_consent` / `revoke_personal_data_consent` / `get_personal_data_consent_status`。同意は MCP セッション（`Mcp-Session-Id`）単位でプロセス内に保持します。無効化は `MCP_PERSONAL_DATA_CONSENT_REQUIRED=false`。
+
 ## 主な環境変数
 
 | 変数 | 既定値 |
@@ -202,3 +214,4 @@ environment:
 | `MCP_SERVER_PORT` | `8090` |
 | `MCP_ALLOWED_ORIGINS` | `http://localhost,http://127.0.0.1` |
 | `MCP_TRACE_ENABLED` | `true`（`[mcp-trace]` ログを出す） |
+| `MCP_PERSONAL_DATA_CONSENT_REQUIRED` | `true`（個人情報レスポンスに同意を要求） |
