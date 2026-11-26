@@ -280,7 +280,7 @@ services:
       dockerfile: Dockerfile.dev
     image: petclinic-mcp-server:dev
     ports:
-      - "127.0.0.1:8090:8090"
+      - "8090:8090"
     environment:
       PETCLINIC_API_BASE_URL: http://backend:9966/petclinic/api
     volumes:
@@ -295,7 +295,7 @@ volumes:
   mcp-server-target:
 ```
 
-- ポートは開発マシンのループバック（`127.0.0.1`）にだけ公開し、同じネットワーク上の他のマシンからは接続できないようにします。
+- ポート公開は `backend` / `frontend` と同様に `8090:8090` とします。`127.0.0.1:8090:8090` だと、Docker Desktop（WSL2）上で Windows 側の Cursor が `ECONNREFUSED` になることがあります。ブラウザからの誤用は 9 章の Origin 検証で防ぎます。
 - `depends_on` は起動順を決めるだけで、API の準備完了までは待ちません。MCP サーバーは起動時に API へ接続せず、ツールが呼ばれた時点で接続します。API がまだ起動中なら、6 章の接続失敗メッセージを返します。
 - 開発用イメージは、既存の `backend` と同じくソースをマウントし、`spring-boot:run` で起動します。ソースを変更したら、コンテナの再起動で反映します。
 - 本番用の `docker-compose.yml` への追加は、開発用で動作を確認してから判断します。

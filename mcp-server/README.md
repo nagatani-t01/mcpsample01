@@ -118,7 +118,7 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
 
 | 症状 | 確認すること |
 | --- | --- |
-| Connection refused | `mcp-server` コンテナが起動しているか、`127.0.0.1:8090` がホストに公開されているか |
+| Connection refused（`ECONNREFUSED 127.0.0.1:8090`） | `mcp-server` が起動しているか。ホスト（WSL / PowerShell）で `docker compose -f docker-compose.dev.yml ps mcp-server` と `curl http://localhost:8090/mcp` を確認。Compose の ports は `8090:8090`（`127.0.0.1` 限定だと Windows 側 Cursor から届かないことがある） |
 | ツールは動くが結果が空／エラー | `backend` が起動しているか、`PETCLINIC_API_BASE_URL` が `http://backend:9966/petclinic/api` になっているか（Compose 内） |
 | 一覧にサーバーが出ない | `.cursor/mcp.json` の場所（リポジトリルート）、Reload Window、Docker / Dev Container の再起動 |
 

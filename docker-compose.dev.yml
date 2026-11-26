@@ -35,7 +35,9 @@ services:
       dockerfile: Dockerfile.dev
     image: petclinic-mcp-server:dev
     ports:
-      - "127.0.0.1:8090:8090"
+      # 0.0.0.0 に公開する（backend/frontend と同様）。127.0.0.1 のみだと
+      # Docker Desktop + WSL2 上で Windows 側 Cursor が ECONNREFUSED になることがある。
+      - "8090:8090"
     environment:
       PETCLINIC_API_BASE_URL: http://backend:9966/petclinic/api
     volumes:
