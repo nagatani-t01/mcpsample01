@@ -120,7 +120,7 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
 
 | 症状 | 確認すること |
 | --- | --- |
-| Connection refused（`ECONNREFUSED 127.0.0.1:8090`） | WSL では届くが Windows / Cursor から `127.0.0.1` も WSL IP も `000` のときは、WSL の localhost 転送が無効。`.cursor/mcp.json` を WSL IP（`hostname -I`）の `http://<IP>:8090/mcp` にするか、`%UserProfile%\.wslconfig` に `networkingMode=mirrored` を新規作成して `wsl --shutdown` |
+| Connection refused / `fetch failed`（Cursor MCP） | Windows から `.cursor/mcp.json` の URL に届いていない。WSL で `bash scripts/update-mcp-url.sh` を実行して IP を更新し、PowerShell で同 URL に `curl.exe` してから Cursor で Reload。PowerShell でも届かない場合は `%UserProfile%\.wslconfig` に `networkingMode=mirrored` を新規作成 → `wsl --shutdown` → Docker 再起動 → `mcp.json` を `http://127.0.0.1:8090/mcp` に戻す |
 | 個人情報ツールが同意メッセージだけ返す | 想定どおり。ユーザー同意後に `grant_personal_data_consent`（`confirmed=true`）して再実行 |
 | ツールは動くが結果が空／エラー | `backend` が起動しているか、`PETCLINIC_API_BASE_URL` が `http://backend:9966/petclinic/api` になっているか（Compose 内） |
 | 一覧にサーバーが出ない | `.cursor/mcp.json` の場所（リポジトリルート）、Reload Window、Docker / Dev Container の再起動 |
