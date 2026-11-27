@@ -13,6 +13,7 @@ const renderRow = (owner: IOwner) => (
     <td>{owner.city}</td>
     <td>{owner.telephone}</td>
     <td className='hidden-xs'>{owner.pets.map(pet => pet.name).join(', ')}</td>
+    <td className='hidden-xs'>{owner.pets.map(pet => pet.type && pet.type.name).filter(Boolean).join(', ')}</td>
   </tr>
 );
 
@@ -27,6 +28,7 @@ const renderOwners = (owners: IOwner[]) => (
           <th>市区町村</th>
           <th>電話番号</th>
           <th className='hidden-xs'>ペット</th>
+          <th className='hidden-xs'>ペットの種類</th>
         </tr>
       </thead>
       <tbody>

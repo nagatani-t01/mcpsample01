@@ -22,13 +22,20 @@ class PersonalDataConsentAspectTests {
 
     private final PersonalDataDetector detector = new PersonalDataDetector();
 
-    private final PersonalDataConsentAspect aspect = new PersonalDataConsentAspect(properties, store, detector);
+    private final PseudonymDictionary dictionary = new PseudonymDictionary();
+
+    private final PersonalDataMasker masker = new PersonalDataMasker(dictionary);
+
+    private final PersonalDataConsentAspect aspect =
+        new PersonalDataConsentAspect(properties, store, detector, masker);
 
     @BeforeEach
     void setSession() {
         McpSessionContext.set("test-session");
         store.revoke();
+        dictionary.clearCurrentSession();
         properties.setConsentRequired(true);
+        properties.setMaskingEnabled(true);
     }
 
     @AfterEach
@@ -37,12 +44,20 @@ class PersonalDataConsentAspectTests {
     }
 
     @Test
-    void blocksKnownPersonalDataToolWithoutConsent() throws Throwable {
+    void masksPersonalDataWithoutConsent() throws Throwable {
+        Owner owner = new Owner(1, "George", "Franklin", "110 W. Liberty St.", "Madison", "6085551023", List.of());
         ProceedingJoinPoint pjp = mock(ProceedingJoinPoint.class);
+        when(pjp.proceed()).thenReturn(owner);
         McpTool tool = tool("get_owner");
 
-        assertThatThrownBy(() -> aspect.gatePersonalData(pjp, tool))
-            .isInstanceOf(PersonalDataConsentRequiredException.class);
+        Object result = aspect.gatePersonalData(pjp, tool);
+
+        assertThat(result).isInstanceOf(Owner.class);
+        Owner masked = (Owner) result;
+        assertThat(masked.id()).isEqualTo(1);
+        assertThat(masked.firstName()).isNotEqualTo("George");
+        assertThat(masked.lastName()).isNotEqualTo("Franklin");
+        assertThat(masked.telephone()).isNotEqualTo("6085551023");
     }
 
     @Test
@@ -57,7 +72,8 @@ class PersonalDataConsentAspectTests {
     }
 
     @Test
-    void blocksDetectedPiiInUnexpectedToolResult() throws Throwable {
+    void blocksWhenMaskingDisabled() throws Throwable {
+        properties.setMaskingEnabled(false);
         Owner owner = new Owner(1, "A", "B", "addr", "city", "123", List.of());
         ProceedingJoinPoint pjp = mock(ProceedingJoinPoint.class);
         when(pjp.proceed()).thenReturn(owner);

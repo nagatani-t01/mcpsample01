@@ -26,7 +26,7 @@ public class OwnerTools {
         name = "list_owners",
         description = """
             飼い主を検索します。lastName を指定すると姓の前方一致で絞り込みます（省略時は全件）。
-            個人情報を含むため、ユーザー同意後に grant_personal_data_consent を実行済みであること。""",
+            同意前は氏名・住所・電話などが仮名化されます。実名が必要な場合はユーザー同意後に grant_personal_data_consent を実行して再呼び出ししてください。""",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false)
     )
     public List<Owner> listOwners(
@@ -39,7 +39,7 @@ public class OwnerTools {
         name = "get_owner",
         description = """
             飼い主 ID を指定して、ペットと来院記録を含む詳細を取得します。
-            個人情報を含むため、ユーザー同意後に grant_personal_data_consent を実行済みであること。""",
+            同意前は氏名・住所・電話・ペット名などが仮名化されます。実名が必要な場合はユーザー同意後に grant_personal_data_consent を実行して再呼び出ししてください。""",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false)
     )
     public Owner getOwner(

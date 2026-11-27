@@ -12,8 +12,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * {@code @McpTool} の戻り値に個人情報が含まれる場合、同意が無ければ結果を破棄して例外にする。
- * 同意ツール自体は対象外。トレース Aspect より内側で動かし、成功ログに実データを残さない。
+ * 個人情報を含むツール結果を、同意が無ければ仮名化して返す（mcp-server-conceal 相当）。
+ * {@code masking-enabled=false} のときは従来どおり同意要求例外で遮断する。
  */
 @Aspect
 @Component
@@ -28,32 +28,24 @@ public class PersonalDataConsentAspect {
         "get_personal_data_consent_status"
     );
 
-    /** 個人情報を返すことが分かっているツール。同意が無ければ API 呼び出し前に止める。 */
-    private static final Set<String> KNOWN_PERSONAL_DATA_TOOLS = Set.of(
-        "list_owners",
-        "get_owner",
-        "create_owner",
-        "list_pets",
-        "create_pet",
-        "list_vets",
-        "list_visits",
-        "create_visit"
-    );
-
     private final PersonalDataConsentProperties properties;
 
     private final PersonalDataConsentStore consentStore;
 
     private final PersonalDataDetector detector;
 
+    private final PersonalDataMasker masker;
+
     public PersonalDataConsentAspect(
         PersonalDataConsentProperties properties,
         PersonalDataConsentStore consentStore,
-        PersonalDataDetector detector
+        PersonalDataDetector detector,
+        PersonalDataMasker masker
     ) {
         this.properties = properties;
         this.consentStore = consentStore;
         this.detector = detector;
+        this.masker = masker;
     }
 
     @Around("@annotation(mcpTool)")
@@ -65,24 +57,29 @@ public class PersonalDataConsentAspect {
         if (CONSENT_TOOLS.contains(toolName)) {
             return joinPoint.proceed();
         }
-        if (KNOWN_PERSONAL_DATA_TOOLS.contains(toolName) && !consentStore.hasConsent()) {
-            log.info(
-                "[mcp-trace] personal-data phase=blocked name={} session={} reason=consent_required_before_call",
-                toolName,
-                McpSessionContext.get()
-            );
-            throw new PersonalDataConsentRequiredException();
-        }
+
         Object result = joinPoint.proceed();
-        if (detector.containsPersonalData(result) && !consentStore.hasConsent()) {
+        if (!detector.containsPersonalData(result) || consentStore.hasConsent()) {
+            return result;
+        }
+
+        if (properties.isMaskingEnabled()) {
+            // メソッド戻り値型（Owner 等）を崩さないよう、同じ型の仮名化オブジェクトだけ返す
+            Object masked = masker.mask(result);
             log.info(
-                "[mcp-trace] personal-data phase=blocked name={} session={} reason=pii_detected_in_response",
+                "[mcp-trace] personal-data phase=masked name={} session={}",
                 toolName,
                 McpSessionContext.get()
             );
-            throw new PersonalDataConsentRequiredException();
+            return masked;
         }
-        return result;
+
+        log.info(
+            "[mcp-trace] personal-data phase=blocked name={} session={} reason=pii_detected_in_response",
+            toolName,
+            McpSessionContext.get()
+        );
+        throw new PersonalDataConsentRequiredException();
     }
 
     private static String resolveToolName(ProceedingJoinPoint joinPoint, McpTool mcpTool) {

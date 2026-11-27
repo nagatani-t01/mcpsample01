@@ -121,7 +121,7 @@ docker compose -f docker-compose.dev.yml up --build mcp-server
 | 症状 | 確認すること |
 | --- | --- |
 | Connection refused / `fetch failed`（Cursor MCP） | Windows から `.cursor/mcp.json` の URL に届いていない。WSL で `bash scripts/update-mcp-url.sh` を実行して IP を更新し、PowerShell で同 URL に `curl.exe` してから Cursor で Reload。PowerShell でも届かない場合は `%UserProfile%\.wslconfig` に `networkingMode=mirrored` を新規作成 → `wsl --shutdown` → Docker 再起動 → `mcp.json` を `http://127.0.0.1:8090/mcp` に戻す |
-| 個人情報ツールが同意メッセージだけ返す | 想定どおり。ユーザー同意後に `grant_personal_data_consent`（`confirmed=true`）して再実行 |
+| 個人情報ツールの氏名などが仮名・別値になる | 想定どおり（同意前は仮名化）。ユーザー同意後に `grant_personal_data_consent`（`confirmed=true`）して再実行すると実名 |
 | ツールは動くが結果が空／エラー | `backend` が起動しているか、`PETCLINIC_API_BASE_URL` が `http://backend:9966/petclinic/api` になっているか（Compose 内） |
 | 一覧にサーバーが出ない | `.cursor/mcp.json` の場所（リポジトリルート）、Reload Window、Docker / Dev Container の再起動 |
 
@@ -195,16 +195,21 @@ environment:
 
 ツール呼び出しの成否は **Cursor Settings → MCP** のサーバー状態や、Agent チャットの応答で確認します。MCP サーバー側の処理内容は、上記 **`mcp-server` コンテナのログ** を見てください。
 
-## 個人情報の同意ゲート
+## 個人情報の仮名化（conceal 相当）
 
-飼い主・ペット・獣医・来院など **個人情報を含むツール結果** は、ユーザー同意なしでは返しません。
+飼い主・ペット・獣医・来院など **個人情報を含むツール結果** は、ユーザー同意前は仮名化して返します（mcp-server-conceal の擬似匿名化をプロジェクト内で模倣）。
 
-1. Agent が該当ツールを呼ぶと、同意要求メッセージだけが返り、実データは含まれません。
-2. ユーザーに同意を確認する。
+- **ID・構造はそのまま**（関連付けは維持）
+- **氏名・市区町村・ペット名・来院メモ**などを、セッション内で一貫した別の値に置き換え
+- **住所・電話**は仮名ではなく一部伏字（住所は先頭3文字、電話は先頭3・末尾2文字を残し中間を `＊`）
+- 同じ原文は同じ仮名になるため、一覧と詳細で人物関係を辿れる
+
+1. Agent が該当ツールを呼ぶと、同じ JSON 構造のまま仮名化された値が返る。
+2. 実名が必要なとき、ユーザーに同意を確認する。
 3. 同意後、`grant_personal_data_consent` を `confirmed=true` で実行する。
-4. 同じ照会ツールをもう一度実行する。
+4. 同じ照会ツールをもう一度実行すると、実データが返る。
 
-関連ツール: `grant_personal_data_consent` / `revoke_personal_data_consent` / `get_personal_data_consent_status`。同意は MCP セッション（`Mcp-Session-Id`）単位でプロセス内に保持します。無効化は `MCP_PERSONAL_DATA_CONSENT_REQUIRED=false`。
+関連ツール: `grant_personal_data_consent` / `revoke_personal_data_consent` / `get_personal_data_consent_status`。同意と仮名辞書は MCP セッション（`Mcp-Session-Id`）単位でプロセス内に保持します。保護自体の無効化は `MCP_PERSONAL_DATA_CONSENT_REQUIRED=false`。仮名化せず従来どおり遮断するには `MCP_PERSONAL_DATA_MASKING_ENABLED=false`。
 
 ## 主な環境変数
 
@@ -214,4 +219,5 @@ environment:
 | `MCP_SERVER_PORT` | `8090` |
 | `MCP_ALLOWED_ORIGINS` | `http://localhost,http://127.0.0.1` |
 | `MCP_TRACE_ENABLED` | `true`（`[mcp-trace]` ログを出す） |
-| `MCP_PERSONAL_DATA_CONSENT_REQUIRED` | `true`（個人情報レスポンスに同意を要求） |
+| `MCP_PERSONAL_DATA_CONSENT_REQUIRED` | `true`（個人情報レスポンスを保護） |
+| `MCP_PERSONAL_DATA_MASKING_ENABLED` | `true`（同意前は仮名化。`false` なら遮断） |

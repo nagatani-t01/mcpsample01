@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 /**
  * {@code @McpTool} メソッドの前後で {@code [mcp-trace] tool} ログを出す。
  * ツール名・引数・所要時間・結果プレビュー（最大 500 文字）を記録し、手動テスト時の追跡に使う。
- * 個人情報ゲート（{@code PersonalDataConsentAspect}）より外側で動かし、同意拒否時は error ログのみにする。
+ * 個人情報ゲート（{@code PersonalDataConsentAspect}）より外側で動かし、仮名化後の結果プレビューを記録する。
  */
 @Aspect
 @Component

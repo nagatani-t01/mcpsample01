@@ -27,7 +27,7 @@ public class PetTools {
         name = "list_pets",
         description = """
             ペット一覧を取得します。ownerId を指定すると、その飼い主のペットだけに絞り込みます。
-            個人情報を含むため、ユーザー同意後に grant_personal_data_consent を実行済みであること。""",
+            同意前はペット名などが仮名化されます。実名が必要な場合はユーザー同意後に grant_personal_data_consent を実行して再呼び出ししてください。""",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false)
     )
     public List<Pet> listPets(

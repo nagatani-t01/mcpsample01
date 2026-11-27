@@ -19,7 +19,9 @@ public class VetTools {
 
     @McpTool(
         name = "list_vets",
-        description = "獣医師一覧を診療科とともに取得します。",
+        description = """
+            獣医師一覧を診療科とともに取得します。
+            同意前は氏名が仮名化されます。実名が必要な場合はユーザー同意後に grant_personal_data_consent を実行して再呼び出ししてください。""",
         annotations = @McpTool.McpAnnotations(readOnlyHint = true, destructiveHint = false)
     )
     public List<Vet> listVets() {

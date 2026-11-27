@@ -24,8 +24,10 @@ petclinic:
   mcp:
     trace-enabled: ${MCP_TRACE_ENABLED:true}
     privacy:
-      # 個人情報を含むツール結果は grant_personal_data_consent 後のみ返す
+      # 個人情報保護を有効にする（同意前は仮名化、同意後は実名）
       consent-required: ${MCP_PERSONAL_DATA_CONSENT_REQUIRED:true}
+      # true: 同意なしでも仮名化して返す / false: 同意なしは遮断（例外）
+      masking-enabled: ${MCP_PERSONAL_DATA_MASKING_ENABLED:true}
 
 mcp:
   allowed-origins: ${MCP_ALLOWED_ORIGINS:http://localhost,http://127.0.0.1}
